@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>File Upload Example</title>
+    </head>
+    <body>
+        <h1>File Upload Example</h1>
+        <input type="file" id="fileInput" />
+        <button onclick="uploadFile()">Upload</button>
+            <img src="http://localhost:3000/uploads/1699031229-crazy_baby.jpeg">
+        <div id="message"></div>
+
+        <script>
+            function uploadFile() {
+                const fileInput = document.getElementById("fileInput");
+                const file = fileInput.files[0];
+
+                if (!file) {
+                    alert("Please select a file to upload.");
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append("image", file);
+
+                fetch("http://localhost:3000/upload", {
+                    method: "POST",
+                    body: formData,
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log(data);
+                        document.getElementById("message").textContent =
+                            data.message;
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        document.getElementById("message").textContent =
+                            "Error uploading the file.";
+                    });
+            }
+        </script>
+    </body>
+</html>
