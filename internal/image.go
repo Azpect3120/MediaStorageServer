@@ -4,6 +4,7 @@ import "time"
 
 type Image struct {
   path         string
+  id           string
   folderId     string
   name         string
   size         int64
