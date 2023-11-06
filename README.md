@@ -6,12 +6,11 @@ Files will be stored locally on the server using its own hardware.
 `Folders` will be created to store the images more securely. Users can only perform actions on the images if they have the `folder_id` provided when creating a folder
 
 Metadata (stored in psql db)
+- ID
+- File size
 - File name
-- User information
 - Time stamp
 - Image Dimensions
-- File size
-- ID
 
 
 Folder Routes:
@@ -34,13 +33,16 @@ Schema:
 CREATE TABLE IF NOT EXISTS folders (
     id UUID PRIMARY KEY DEFAULT generate_uuid_v4(),
     name VARCHAR(32) UNIQUE,
+    createdAt TIMESTAMP DEFAULT time.now(),
 );
-```
 
-```sql
 CREATE TABLE IF NOT EXISTS images (
     id UUID PRIMARY KEY DEFAULT generate_uuid_v4(),
-    cloudID UUID REFERENCES folders(id),
-
+    folderId UUID REFERENCES folders(id),
+    name TEXT,
+    size BIGINT,
+    height INT,
+    width INT,
+    uploadedAt TIMESTAMP DEFAULT time.now(),
 );
 ```
