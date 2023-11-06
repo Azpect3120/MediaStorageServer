@@ -42,9 +42,7 @@ func main() {
 		// Here you can add code to save the file path and metadata to your SQL database
 		// You might want to store the filename, user information, and other metadata.
 
-		imageUrl := "/images/" + filename
-
-		c.JSON(http.StatusOK, gin.H{"message": "File uploaded successfully", "file": file, "path": uploadPath, "filename": filename, "url": imageUrl})
+		c.JSON(http.StatusOK, gin.H{ "message": "File uploaded successfully", "file": file, "path": uploadPath, "filename": filename })
 	})
 
 	r.GET("/images/:imageID", func(c *gin.Context) {

@@ -9,7 +9,8 @@
         <h1>File Upload Example</h1>
         <input type="file" id="fileInput" />
         <button onclick="uploadFile()">Upload</button>
-            <img src="http://localhost:3000/uploads/1699031229-crazy_baby.jpeg">
+            <img src="" id="imageOutput">
+            <a href="" id="linkOutput" target="_blank"> Image </a>
         <div id="message"></div>
 
         <script>
@@ -25,7 +26,7 @@
                 const formData = new FormData();
                 formData.append("image", file);
 
-                fetch("http://localhost:3000/upload", {
+                fetch("http://38.9.242.59:3000/upload", {
                     method: "POST",
                     body: formData,
                 })
@@ -34,6 +35,9 @@
                         console.log(data);
                         document.getElementById("message").textContent =
                             data.message;
+                        document.getElementById("linkOutput").href = `http://38.9.242.59:3000/${data.path}`;
+                        document.getElementById("imageOutput").src = `http://38.9.242.59:3000/${data.path}`;
+                        document.getElementById("linkOutput").textContent = data.filename;
                     })
                     .catch((error) => {
                         console.error(error);
