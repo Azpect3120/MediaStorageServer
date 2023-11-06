@@ -29,10 +29,12 @@ Image Routes:
 
 Schema:
 ```sql
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE IF NOT EXISTS folders (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(32) UNIQUE,
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS images (
@@ -42,6 +44,6 @@ CREATE TABLE IF NOT EXISTS images (
     size BIGINT,
     height INT,
     width INT,
-    uploadedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    uploadedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```

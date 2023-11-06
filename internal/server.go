@@ -8,8 +8,8 @@ import (
 )
 
 type Server struct {
-	Router *gin.Engine
-	Config cors.Config
+	Router	*gin.Engine
+	Config	cors.Config
 }
 
 // CreateServer creates a new server object with default values.
