@@ -3,9 +3,9 @@
 
 Files will be stored locally on the server using its own hardware.
 
-`Clouds` will be created to store the images more securely. Users can only perform actions on the images if they have the `cloud_id` provided when creating a cloud
+`Folders` will be created to store the images more securely. Users can only perform actions on the images if they have the `folder_id` provided when creating a folder
 
-Metadata will be stored in a PSQL database
+Metadata (stored in psql db)
 - File name
 - User information
 - Time stamp
@@ -14,10 +14,33 @@ Metadata will be stored in a PSQL database
 - ID
 
 
-Endpoints:
-- `POST /cloud` : Create a new cloud
-- `GET /cloud` : Get cloud metadata
-- `POST /upload/{cloud_id}` : To upload images
-- `GET /images/{cloud_id}/{id}` : Retrieve a specific image
-- `PUT /images/{cloud_id}/{id}` : Update image metadata
-- `DELETE /images/{cloud_id}/{id}` : Delete an image and its metadata
+Folder Routes:
+- `POST /folders` : Create a new folder.
+- `GET /folders/{folder_id}` : Get folder metadata.
+- `PUT /folders/{folder_id}` : Update a folders metadata.
+- `DELETE /folders/{folder_id}` : Delete a folder and it's images.
+
+
+Image Routes:
+- `POST /images/{folder_id}` : Upload an image to a specific folder.
+- `GET /images/{image_id}` : Retrieve a specific image and its meta data.
+- `PUT /images/{image_id}` : Update image metadata.
+- `DELETE /images/{image_id}` : Delete an image and its metadata.
+
+
+Schema:
+
+```sql
+CREATE TABLE IF NOT EXISTS folders (
+    id UUID PRIMARY KEY DEFAULT generate_uuid_v4(),
+    name VARCHAR(32) UNIQUE,
+);
+```
+
+```sql
+CREATE TABLE IF NOT EXISTS images (
+    id UUID PRIMARY KEY DEFAULT generate_uuid_v4(),
+    cloudID UUID REFERENCES folders(id),
+
+);
+```
