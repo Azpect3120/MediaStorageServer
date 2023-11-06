@@ -28,21 +28,20 @@ Image Routes:
 
 
 Schema:
-
 ```sql
 CREATE TABLE IF NOT EXISTS folders (
-    id UUID PRIMARY KEY DEFAULT generate_uuid_v4(),
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(32) UNIQUE,
-    createdAt TIMESTAMP DEFAULT time.now(),
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 );
 
 CREATE TABLE IF NOT EXISTS images (
-    id UUID PRIMARY KEY DEFAULT generate_uuid_v4(),
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     folderId UUID REFERENCES folders(id),
     name TEXT,
     size BIGINT,
     height INT,
     width INT,
-    uploadedAt TIMESTAMP DEFAULT time.now(),
+    uploadedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 );
 ```
