@@ -32,3 +32,7 @@ func CreateDatabase () *Database {
 
 	return database
 }
+
+func GetImage (id string) *Image {
+
+}
