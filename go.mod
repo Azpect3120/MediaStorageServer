@@ -1,4 +1,4 @@
-module github.com/Azpect3120/media-storage-server
+module github.com/Azpect3120/MediaStorageServer
 
 go 1.21
 
