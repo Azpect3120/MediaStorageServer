@@ -1,4 +1,4 @@
-package internal
+package database
 
 import (
 	"os"
@@ -6,6 +6,8 @@ import (
 	"database/sql"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+
+	"github.com/Azpect3120/MediaStorageServer/internal"
 )
 
 type Database struct {
@@ -33,6 +35,3 @@ func CreateDatabase () *Database {
 	return database
 }
 
-func GetImage (id string) *Image {
-
-}
