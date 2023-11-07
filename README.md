@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS folders (
 
 CREATE TABLE IF NOT EXISTS images (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    folderId UUID REFERENCES folders(id),
+    folderId UUID REFERENCES folders(id) ON DELETE CASCADE,
     name TEXT,
     size BIGINT,
     height INT,

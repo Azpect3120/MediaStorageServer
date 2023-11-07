@@ -42,7 +42,7 @@ func CreateFolder (db *database.Database, root string, ctx *gin.Context) {
 	}
 
 	// Create folder in file system
-	newFolderPath := filepath.Join(root, folder.Name)
+	newFolderPath := filepath.Join(root, folder.ID)
 
 	err = os.Mkdir(newFolderPath, 0755)
 	if err != nil {
@@ -65,5 +65,23 @@ func UpdateFolder (db *database.Database, root string, ctx *gin.Context) {
 
 // Deletes a folder
 func DeleteFolder (db *database.Database, root string, ctx *gin.Context) {
+	id := ctx.Param("id")
 
+	// Delete folder from database
+	err := db.DeleteFolder(id)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+		return
+	}
+
+	// Delete folder from file system
+	targetPath := filepath.Join(root, id)
+
+	err = os.RemoveAll(targetPath)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+		return
+	}
+	
+	ctx.JSON(http.StatusNoContent, gin.H{ "status": http.StatusNoContent })
 }

@@ -81,4 +81,5 @@ func (s *Server) LoadRoutes(db *database.Database) {
 	s.Router.GET("/status", routes.Status)
 
 	s.Router.POST("/folders", func(ctx *gin.Context) { routes.CreateFolder(db, s.UploadRoot, ctx) })
+	s.Router.DELETE("/folders/:id", func(ctx *gin.Context) { routes.DeleteFolder(db, s.UploadRoot, ctx) })
 }
