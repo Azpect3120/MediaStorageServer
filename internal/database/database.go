@@ -1,22 +1,20 @@
 package database
 
 import (
-	"os"
-	"log"
 	"database/sql"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
-
-	"github.com/Azpect3120/MediaStorageServer/internal"
+	"log"
+	"os"
 )
 
 type Database struct {
-	connectionString	string
-	database			*sql.DB
+	connectionString string
+	database         *sql.DB
 }
 
 // CreateDatabase creates a database object and attempts to connect to the database.
-func CreateDatabase () *Database {
+func CreateDatabase() *Database {
 	if err := godotenv.Load(); err != nil {
 		log.Fatalln("Error loading environment variables: ", err)
 	}
@@ -34,4 +32,3 @@ func CreateDatabase () *Database {
 
 	return database
 }
-

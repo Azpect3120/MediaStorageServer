@@ -1,15 +1,21 @@
 package internal
 
 import (
+	"errors"
+	"os"
+	"path/filepath"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
+	"github.com/Azpect3120/MediaStorageServer/internal/database"
 	"github.com/Azpect3120/MediaStorageServer/internal/routes"
 )
 
 type Server struct {
-	Router	*gin.Engine
-	Config	cors.Config
+	Router     *gin.Engine
+	Config     cors.Config
+	UploadRoot string
 }
 
 // CreateServer creates a new server object with default values.
@@ -23,6 +29,7 @@ func CreateServer() *Server {
 	var server *Server = &Server{
 		Router: gin.Default(),
 		Config: cors.DefaultConfig(),
+		UploadRoot: "",
 	}
 
 	server.Config.AllowOrigins = []string{"*"}
@@ -30,15 +37,48 @@ func CreateServer() *Server {
 	return server
 }
 
+// DefineUploadRoot defines the path to '/uploads' directory where the folders will be stored.
+//
+// Path should point to the '/uploads' directory. ex: '~/Documents/media-server/uploads'.
+//
+// Path can relative or absolute.
+func (s *Server) DefineUploadRoot (path string) (string, error) {
+	absPath, err := filepath.Abs(path)
+	if err != nil {
+		return "", err 
+	}
+
+	s.UploadRoot = absPath
+	return s.UploadRoot, nil
+}
+
 // Run runs the server on the provided port.
 //
 // Returns any errors the server may encounter when attempting to run.
+//
+// Initializes the uploads folder if it does not exist.
 func (s *Server) Run(port string) error {
+	if s.UploadRoot == "" {
+		return errors.New("Servers upload root is not defined. Please define it with server.DefineUploadRoot.")
+	}
+
+	_, err := os.Stat(s.UploadRoot)
+
+	if os.IsNotExist(err) {
+		err = os.Mkdir(s.UploadRoot, 0755)
+	}
+
+	if err != nil {
+		return err
+	}
+
 	return s.Router.Run(":" + port)
 }
 
-// Loads the routes from the "/routes/*" directory 
-func (s *Server) LoadRoutes () {
+// Loads the routes from the "/routes/*" directory
+func (s *Server) LoadRoutes(db *database.Database) {
 	s.Router.GET("/", routes.Index)
 	s.Router.GET("/status", routes.Status)
+
+	s.Router.POST("/folders", func(ctx *gin.Context) { routes.CreateFolder(db, s.UploadRoot, ctx) })
 }

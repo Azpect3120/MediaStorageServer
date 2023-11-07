@@ -1,4 +1,4 @@
-package internal
+package models
 
 import "time"
 
@@ -11,10 +11,4 @@ type Image struct {
 	height     int
 	width      int
 	uploadedAt time.Time
-}
-
-type Folder struct {
-	id        string
-	name      string
-	createdAt time.Time
 }
