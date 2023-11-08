@@ -80,6 +80,8 @@ func (s *Server) LoadRoutes(db *database.Database) {
 	s.Router.GET("/", routes.Index)
 	s.Router.GET("/status", routes.Status)
 
+	s.Router.GET("/folders/:id", func(ctx *gin.Context) { routes.GetFolder(db, s.UploadRoot, ctx) })
 	s.Router.POST("/folders", func(ctx *gin.Context) { routes.CreateFolder(db, s.UploadRoot, ctx) })
+	s.Router.PUT("/folders/:id", func(ctx *gin.Context) { routes.UpdateFolder(db, s.UploadRoot, ctx) })
 	s.Router.DELETE("/folders/:id", func(ctx *gin.Context) { routes.DeleteFolder(db, s.UploadRoot, ctx) })
 }

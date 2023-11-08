@@ -15,7 +15,7 @@ Metadata (stored in psql db)
 
 Folder Routes:
 - `POST /folders` : Create a new folder.
-- `GET /folders/{folder_id}` : Get folder metadata.
+- `GET /folders/{folder_id}` : Get folder metadata and list of images inside the folder.
 - `PUT /folders/{folder_id}` : Update a folders metadata.
 - `DELETE /folders/{folder_id}` : Delete a folder and it's images.
 

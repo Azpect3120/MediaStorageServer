@@ -1,13 +1,14 @@
 package routes
 
 import (
-	"os"
 	"net/http"
+	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 
 	"github.com/Azpect3120/MediaStorageServer/internal/database"
+	"github.com/Azpect3120/MediaStorageServer/internal/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -55,12 +56,62 @@ func CreateFolder (db *database.Database, root string, ctx *gin.Context) {
 
 // Gets a folder
 func GetFolder (db *database.Database, root string, ctx *gin.Context) {
+	id := ctx.Param("id")
+	
+	// Get folder meta data from database
+	folder, err := db.GetFolder(id)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": err.Error() })
+		return
+	}
 
+	// Get images from the folder 
+	folderPath := filepath.Join(root, id)
+
+	files, err := os.ReadDir(folderPath)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": err.Error() })
+		return
+	}
+
+	var images []*models.Image
+
+	for _, file := range files {
+		if !file.IsDir() {
+			// Replace with database call to GetImage
+			images = append(images, &models.Image{ Name: file.Name() })
+		}
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "folder": folder, "images": images })
 }
 
 // Updates a folder
 func UpdateFolder (db *database.Database, root string, ctx *gin.Context) {
+	id := ctx.Param("id")
 
+	folder := &models.Folder{}
+
+	if err := ctx.ShouldBindJSON(&folder); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+		return
+	}
+
+	// Update folder in database
+	err := db.UpdateFolder(id, folder)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+		return
+	}
+
+	// Get updated folder from database
+	folder, err = db.GetFolder(id)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+		return
+	}
+	
+	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "folder": folder })
 }
 
 // Deletes a folder
@@ -83,5 +134,5 @@ func DeleteFolder (db *database.Database, root string, ctx *gin.Context) {
 		return
 	}
 	
-	ctx.JSON(http.StatusNoContent, gin.H{ "status": http.StatusNoContent })
+	ctx.JSON(http.StatusNoContent, nil)
 }
