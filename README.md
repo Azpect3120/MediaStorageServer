@@ -22,10 +22,11 @@ Folder Routes:
 
 Image Routes:
 - `POST /images/{folder_id}` : Upload an image to a specific folder.
-- `GET /images/{image_id}` : Retrieve a specific image and its meta data.
-- `PUT /images/{image_id}` : Update image metadata.
+- `GET /images/{image_id}` : Retrieve a specific images meta data.
 - `DELETE /images/{image_id}` : Delete an image and its metadata.
 
+Displaying an Image:
+`host:port/uploads/folder_id/image_id`
 
 Schema:
 ```sql
