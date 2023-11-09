@@ -38,10 +38,11 @@ func CreateImage (db *database.Database, root string, ctx *gin.Context) {
 	}
 
 	// Join path to abs path and get extension
-	path := filepath.Join(root, image.FolderId, image.ID) + filepath.Ext(image.Name)
+	fullPath := filepath.Join(root, image.FolderId, image.ID) + filepath.Ext(image.Name)
+	image.Path = filepath.Join("uploads", image.FolderId, image.ID) + filepath.Ext(image.Name)
 
 	// Create image on file system using newly updated image object
-	outputFile, err := os.Create(path)
+	outputFile, err := os.Create(fullPath)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
 		return
@@ -55,12 +56,20 @@ func CreateImage (db *database.Database, root string, ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{ "image": image, "path": path })
+	ctx.JSON(http.StatusOK, gin.H{ "image": image })
 }
 
 // Gets a image
 func GetImage (db *database.Database, root string, ctx *gin.Context) {
+	id := ctx.Param("id")
 
+	image, err := db.GetImage(id)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+		return
+	}
+	
+	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "image": image })
 }
 
 // Updates a image

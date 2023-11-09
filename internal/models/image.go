@@ -7,6 +7,7 @@ type Image struct {
 	FolderId   string
 	Name       string
 	Size       int64
-	Format	   string
+	Format     string
 	UploadedAt time.Time
+	Path       string
 }

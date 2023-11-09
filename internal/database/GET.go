@@ -1,6 +1,9 @@
 package database
 
-import "github.com/Azpect3120/MediaStorageServer/internal/models"
+import (
+	"github.com/Azpect3120/MediaStorageServer/internal/models"
+	"path/filepath"
+)
 
 func (db *Database) GetFolder (id string) (*models.Folder, error) {
 	var statement string = "SELECT * FROM folders WHERE id = $1;"
@@ -15,5 +18,15 @@ func (db *Database) GetFolder (id string) (*models.Folder, error) {
 }
 
 func (db *Database) GetImage (id string) (*models.Image, error) {
-	return nil, nil
+	var statement string = "SELECT * FROM images WHERE id = $1;"
+
+	var image models.Image 
+
+	if err := db.database.QueryRow(statement, id).Scan(&image.ID, &image.FolderId, &image.Name, &image.Size, &image.UploadedAt, &image.Format); err != nil {
+		return nil, err
+	}
+
+	image.Path = filepath.Join("uploads", image.FolderId, image.ID) + filepath.Ext(image.Name)
+
+	return &image, nil
 }

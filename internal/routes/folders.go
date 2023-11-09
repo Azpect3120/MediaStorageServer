@@ -79,7 +79,8 @@ func GetFolder (db *database.Database, root string, ctx *gin.Context) {
 	for _, file := range files {
 		if !file.IsDir() {
 			// Replace with database call to GetImage
-			images = append(images, &models.Image{ Name: file.Name() })
+			image, _ := db.GetImage(strings.Split(file.Name(), ".")[0])
+				images = append(images, image)
 		}
 	}
 

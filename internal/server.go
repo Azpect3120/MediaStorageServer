@@ -58,6 +58,8 @@ func (s *Server) DefineUploadRoot (path string) (string, error) {
 // Returns any errors the server may encounter when attempting to run.
 //
 // Initializes the uploads folder if it does not exist.
+//
+// Serves the uploads folder.
 func (s *Server) Run(port string) error {
 	if s.UploadRoot == "" {
 		return errors.New("Servers upload root is not defined. Please define it with server.DefineUploadRoot.")
@@ -73,6 +75,8 @@ func (s *Server) Run(port string) error {
 		return err
 	}
 
+	s.Router.Static("/uploads", "./uploads")
+
 	return s.Router.Run(":" + port)
 }
 
@@ -86,5 +90,6 @@ func (s *Server) LoadRoutes(db *database.Database) {
 	s.Router.PUT("/folders/:id", func(ctx *gin.Context) { routes.UpdateFolder(db, s.UploadRoot, ctx) })
 	s.Router.DELETE("/folders/:id", func(ctx *gin.Context) { routes.DeleteFolder(db, s.UploadRoot, ctx) })
 
+	s.Router.GET("/images/:id", func(ctx *gin.Context) { routes.GetImage(db, s.UploadRoot, ctx) })
 	s.Router.POST("/images/:id", func(ctx *gin.Context) { routes.CreateImage(db, s.UploadRoot, ctx) })
 }
