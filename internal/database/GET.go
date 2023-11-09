@@ -22,7 +22,7 @@ func (db *Database) GetImage (id string) (*models.Image, error) {
 
 	var image models.Image 
 
-	if err := db.database.QueryRow(statement, id).Scan(&image.ID, &image.FolderId, &image.Name, &image.Size, &image.UploadedAt, &image.Format); err != nil {
+	if err := db.database.QueryRow(statement, id).Scan(&image.ID, &image.FolderId, &image.Name, &image.Size, &image.Format, &image.UploadedAt); err != nil {
 		return nil, err
 	}
 

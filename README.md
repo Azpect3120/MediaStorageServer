@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS images (
     folderId UUID REFERENCES folders(id) ON DELETE CASCADE,
     name TEXT,
     size BIGINT,
-    uploadedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     type TEXT,
+    uploadedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
