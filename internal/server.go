@@ -33,6 +33,7 @@ func CreateServer() *Server {
 	}
 
 	server.Config.AllowOrigins = []string{"*"}
+	server.Router.Use(cors.New(server.Config))
 
 	return server
 }
@@ -84,4 +85,6 @@ func (s *Server) LoadRoutes(db *database.Database) {
 	s.Router.POST("/folders", func(ctx *gin.Context) { routes.CreateFolder(db, s.UploadRoot, ctx) })
 	s.Router.PUT("/folders/:id", func(ctx *gin.Context) { routes.UpdateFolder(db, s.UploadRoot, ctx) })
 	s.Router.DELETE("/folders/:id", func(ctx *gin.Context) { routes.DeleteFolder(db, s.UploadRoot, ctx) })
+
+	s.Router.POST("/images/:id", func(ctx *gin.Context) { routes.CreateImage(db, s.UploadRoot, ctx) })
 }

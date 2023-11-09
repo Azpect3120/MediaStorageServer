@@ -5,13 +5,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>File Upload Example</title>
     </head>
-    <body>
+    <body style="background-color: gray;">
         <h1>File Upload Example</h1>
         <input type="file" id="fileInput" />
         <button onclick="uploadFile()">Upload</button>
-            <img src="" id="imageOutput">
-            <a href="" id="linkOutput" target="_blank"> Image </a>
-        <div id="message"></div>
+            <!-- <img src="" id="imageOutput"> -->
+            <!-- <a href="" id="linkOutput" target="_blank"> Image </a> -->
 
         <script>
             function uploadFile() {
@@ -24,25 +23,19 @@
                 }
 
                 const formData = new FormData();
-                formData.append("image", file);
+                formData.append("media_upload", file);
 
-                fetch("http://38.9.242.59:3000/upload", {
+                fetch("http://localhost:3000/images/1d381e7e-92ae-46eb-9f61-15212021bb29", {
                     method: "POST",
                     body: formData,
                 })
                     .then((response) => response.json())
                     .then((data) => {
                         console.log(data);
-                        document.getElementById("message").textContent =
-                            data.message;
-                        document.getElementById("linkOutput").href = `http://38.9.242.59:3000/${data.path}`;
-                        document.getElementById("imageOutput").src = `http://38.9.242.59:3000/${data.path}`;
-                        document.getElementById("linkOutput").textContent = data.filename;
                     })
                     .catch((error) => {
-                        console.error(error);
-                        document.getElementById("message").textContent =
-                            "Error uploading the file.";
+                        console.log(error);
+                        <!-- document.getElementById("message").textContent = "Error uploading the file."; -->
                     });
             }
         </script>

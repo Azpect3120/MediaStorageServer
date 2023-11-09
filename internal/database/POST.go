@@ -1,8 +1,11 @@
 package database
 
 import (
-	"github.com/Azpect3120/MediaStorageServer/internal/models"
 	"strings"
+	"errors"
+
+	"github.com/Azpect3120/MediaStorageServer/internal/models"
+	"github.com/google/uuid"
 )
 
 // Create a folder in the database
@@ -32,6 +35,33 @@ func (db *Database) CreateFolder (name string) (*models.Folder, error) {
 	return &folder, nil
 }
 
-func (db *Database) CreateImage (name string) (*models.Image, error) {
-	return nil, nil
+// Create an image in the database
+//
+// Converts image names to be lowercase
+//
+// Does not return a new image object. Updates the image object passed into the function.
+func (db *Database) CreateImage (image *models.Image) error {
+	image.Name = strings.ToLower(image.Name)
+
+	image.ID = uuid.New().String()
+
+	// Insert into database
+	var statement string = "INSERT INTO images (id, folderid, name, type, size) VALUES ($1, $2, $3, $4, $5);"
+
+	result, err := db.database.Exec(statement, image.ID, image.FolderId, image.Name, image.Format, image.Size)
+	if err != nil {
+
+		return err 
+	}
+
+	numRows, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	
+	if numRows == 0 {
+		return errors.New("New image was not created.")
+	}
+
+	return nil
 }
