@@ -8,5 +8,5 @@ import (
 
 // Redirects the user to github page
 func Index (ctx *gin.Context) {
-	ctx.Redirect(http.StatusPermanentRedirect, "https://github.com/Azpect3120/MediaStorageServer")
+	ctx.Redirect(http.StatusTemporaryRedirect, "https://github.com/Azpect3120/MediaStorageServer")
 }
