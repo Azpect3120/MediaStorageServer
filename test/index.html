@@ -9,8 +9,9 @@
         <h1>File Upload Example</h1>
         <input type="file" id="fileInput" />
         <button onclick="uploadFile()">Upload</button>
-            <!-- <img src="" id="imageOutput"> -->
-            <!-- <a href="" id="linkOutput" target="_blank"> Image </a> -->
+            <img src="" id="imageOutput">
+            <a href="" id="linkOutput" target="_blank"> Image </a>
+            <p id="message"></p>
 
         <script>
             function uploadFile() {
@@ -32,10 +33,14 @@
                     .then((response) => response.json())
                     .then((data) => {
                         console.log(data);
+                        document.getElementById("imageOutput").src = `http://localhost:3000/${data.image.Path}`
+                        document.getElementById("linkOutput").href = `http://localhost:3000/${data.image.Path}`
+
+                        document.getElementById("message").textContent = `File upload: ${data.image.Name}`;
                     })
                     .catch((error) => {
                         console.log(error);
-                        <!-- document.getElementById("message").textContent = "Error uploading the file."; -->
+                        document.getElementById("message").textContent = "Error uploading the file.";
                     });
             }
         </script>
