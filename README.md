@@ -26,7 +26,7 @@ Image Routes:
 - `DELETE /images/{image_id}` : Delete an image and its metadata.
 
 Displaying an Image:
-`host:port/uploads/folder_id/image_id`
+`url/uploads/folder_id/image_id`
 
 Schema:
 ```sql
