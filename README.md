@@ -153,7 +153,8 @@ Ex. Response
         "UploadedAt": "timestamp",
         "Path": "uploads/generated-id-here/image-id.jpg"
       }
-    ]
+    ],
+    "status": 200
   }
 ```
 
