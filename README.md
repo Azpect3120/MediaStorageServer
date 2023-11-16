@@ -15,6 +15,9 @@ A simple media storage server for storing various types of media. Can be used fo
     -   [Getting Folders]()
     -   [Editing Folders]()
     -   [Deleting Folders]()
+    -   [Uploading Images]()
+    -   [Displaying Images]()
+    -   [Deleting Images]()
 -   [Contributing](#contributing)
 -   [License](#license)
 
@@ -94,6 +97,65 @@ Once the server is up and running you will need to connect to a PostgreSQL datab
 
 ## Usage
 
+### Creating Folders
+
+Folders are created to allow users to store images in a organized format. All you need to do is send a `POST` request to the `/folders` endpoint.
+
+NOTE: The name provided must be unique. Response will return an error if the name is invalid.
+
+```json
+  {
+    "name": "folder-name-here"
+  }
+```
+
+Ex. Response
+
+```json
+  {
+    "folder": {
+      "ID": "generated-id-here",
+      "Name": "folder-name-here",
+      "CreatedAt": "timestamp"
+    },
+    "status": 201
+  }
+```
+
+
+### Getting Folders
+
+Folders store very little data on their own, but by getting a folder using its `ID` you can view a list of each image stored in the folder. To do this, send a `GET` request to the `/folders/<folder_id>` endpoint. 
+
+NOTE: If a folder is not found, PSQL will return an error with a `400` error code.
+
+
+```bash
+  http://localhost:3000/folders/<folder_id>
+```
+
+Ex. Response
+
+```json
+  {
+    "folder": {
+      "ID": "generated-id-here",
+      "Name": "folder-name-here",
+      "CreatedAt": "timestamp"
+    },
+    "images": [
+      {
+        "ID": "image-id",
+        "FolderId": "generated-id-here",
+        "Name": "image-name.jpg",
+        "Size": 940184,
+        "Format": "image/jpeg",
+        "UploadedAt": "timestamp",
+        "Path": "uploads/generated-id-here/image-id.jpg"
+      }
+    ]
+  }
+```
 
 
 
