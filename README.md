@@ -11,8 +11,8 @@ A simple media storage server for storing various types of media. Can be used fo
     -   [Installation](#installation)
     -   [Database](#database)
 -   [Usage](#usage)
-    -   [Creating Folders]()
-    -   [Getting Folders]()
+    -   [Creating Folders](creating-folders)
+    -   [Getting Folders](getting-folders)
     -   [Editing Folders]()
     -   [Deleting Folders]()
     -   [Uploading Images]()
@@ -97,7 +97,7 @@ Once the server is up and running you will need to connect to a PostgreSQL datab
 
 ## Usage
 
-### Creating Folders
+### <a id="creating-folders"></a>Creating Folders
 
 Folders are created to allow users to store images in a organized format. All you need to do is send a `POST` request to the `/folders` endpoint.
 
@@ -123,7 +123,7 @@ Ex. Response
 ```
 
 
-### Getting Folders
+### <a id="getting-folders"></a>Getting Folders
 
 Folders store very little data on their own, but by getting a folder using its `ID` you can view a list of each image stored in the folder. To do this, send a `GET` request to the `/folders/<folder_id>` endpoint. 
 
