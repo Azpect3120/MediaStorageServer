@@ -13,11 +13,12 @@ A simple media storage server for storing various types of media. Can be used fo
 -   [Usage](#usage)
     -   [Creating Folders](#creating-folders)
     -   [Getting Folders](#getting-folders)
-    -   [Editing Folders]()
-    -   [Deleting Folders]()
-    -   [Uploading Images]()
-    -   [Displaying Images]()
-    -   [Deleting Images]()
+    -   [Editing Folders](#editing-folders)
+    -   [Deleting Folders](#deleting-folders)
+    -   [Uploading Images](#uploading-images)
+    -   [Getting Images](#getting-images)
+    -   [Displaying Images](#displaying-images)
+    -   [Deleting Images](#deleting-images)
 -   [Contributing](#contributing)
 -   [License](#license)
 
@@ -99,7 +100,7 @@ Once the server is up and running you will need to connect to a PostgreSQL datab
 
 ### <a id="creating-folders"></a>Creating Folders
 
-Folders are created to allow users to store images in a organized format. All you need to do is send a `POST` request to the `/folders` endpoint.
+To create a folder to begin storing images, send a `POST` request to the `/folders` endpoint.
 
 NOTE: The name provided must be unique. Response will return an error if the name is invalid.
 
@@ -125,13 +126,12 @@ Ex. Response
 
 ### <a id="getting-folders"></a>Getting Folders
 
-Folders store very little data on their own, but by getting a folder using its `ID` you can view a list of each image stored in the folder. To do this, send a `GET` request to the `/folders/<folder_id>` endpoint. 
+Folder meta data and images can be viewed by sending a `GET` request to the `/folders/<folder_id>` endpoint.
 
-NOTE: If a folder is not found, PSQL will return an error with a `400` error code.
-
+NOTE: If a folder is not found, a PSQL error will be returned with a `400` error code.
 
 ```bash
-  http://localhost:3000/folders/<folder_id>
+  GET http://localhost:3000/folders/<folder_id>
 ```
 
 Ex. Response
@@ -158,8 +158,83 @@ Ex. Response
   }
 ```
 
+### <a id="editing-folders"></a> Editing Folders
 
+Folder name can be updated by sending a `PUT` request to the `/folders/<folder_id>` endpoint.
 
+NOTE: Folder names must be valid, if a name is provided that is not valid, it will be cleaned as best as possible. If it cannot be cleaned then an error will be thrown.
+
+```json
+  {
+    "name": "newFolderName"
+  }
+```
+
+Ex. Response
+
+```json
+  {
+    "folder": {
+      "ID": "folderIDHere",
+      "Name": "newFoldername",
+      "CreatedAt": "timestamp"
+    },
+    "status": 200
+  }
+```
+
+### <a id="deleting-folders"></a> Deleting Folders
+
+A folder can be deleted by sending a `DELETE` request to the `/folders/<folder_id>` endpoint. Nothing is returned from this request unless an error is encountered.
+
+NOTE: Images will be deleted when its parent folder is deleted.
+
+```bash
+  DELETE http://localhost:3000/folders/<folder_id>
+```
+
+### <a id="uploading-images"></a> Uploading Images
+
+### <a id="getting-images"></a> Getting Images
+
+An images meta data can be viewed by sending a `GET` request to the `/images/<image_id>` endpoint. The `path` property that is returned can be used to display the image.
+
+```bash
+  GET http://localhost:3000/images/<image_id>
+```
+
+Ex. Response
+
+```json
+{
+  "image": {
+    "ID": "imageID",
+    "FolderId": "folderID",
+    "Name": "image.jpg",
+    "Size": 66533,
+    "Format": "image/jpeg",
+    "UploadedAt": "timestamp",
+    "Path": "uploads/<folder_id>/<image_id>.jpg"
+  },
+  "status": 200
+}
+```
+
+### <a id="displaying-images"></a> Displaying Images
+
+In web applications, the images can be displaying using their path, which can be found in the images meta data. Simply use the path as the `src` attribute in any web application.
+
+```html
+  <img src="http://localhost:3000/uploads/<folder_id>/<image_id>" alt="Media Storage Image">
+```
+
+### <a id="deleting-images"></a> Deleting Images
+
+An image can be deleted by sending a `DELETE` request to the `/images/<image_id>` endpoint. Nothing is returned from this request unless an error is encountered.
+
+```bash
+  DELETE http://localhost:3000/images/<image_id>
+```
 
 
 
