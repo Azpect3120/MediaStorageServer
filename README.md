@@ -73,6 +73,12 @@ Follow these steps to get the project up and running on your local machine.
 
 Your authentication server should now be running on `http://localhost:3000`.
 
+The servers port can be changed in the `cmd/mediaStorageServer/main.go` file:
+
+```go
+	err := server.Run("NEW PORT HERE")
+```
+
 ### Database
 
 Once the server is up and running you will need to connect to a PostgreSQL database. If you would like the code to work out of the box, you may copy the database schema provided below.
