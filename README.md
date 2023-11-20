@@ -76,7 +76,7 @@ Your authentication server should now be running on `http://localhost:3000`.
 The servers port can be changed in the `cmd/mediaStorageServer/main.go` file:
 
 ```go
-	err := server.Run("NEW PORT HERE")
+  err := server.Run("NEW PORT HERE")
 ```
 
 ### Database
