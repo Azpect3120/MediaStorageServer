@@ -20,7 +20,7 @@ func (db *Database) UpdateFolder (id string, updated *models.Folder) error {
 	}
 
 	if numRows == 0 {
-		return errors.New("Folder with ID " + " not found")
+		return errors.New("Folder with ID " +  id + " not found")
 	}
 
 	return nil

@@ -74,7 +74,7 @@ func GetFolder (db *database.Database, root string, ctx *gin.Context) {
 		return
 	}
 
-	var images []*models.Image
+	var images []*models.Image = []*models.Image{}
 
 	for _, file := range files {
 		if !file.IsDir() {
