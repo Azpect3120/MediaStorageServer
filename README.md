@@ -324,8 +324,6 @@ An image can be deleted by sending a `DELETE` request to the `/images/<image_id>
   DELETE http://localhost:3000/images/<image_id>
 ```
 
-
-
 ## Contributing
 
 Contributions are welcome! If you'd like to contribute to this project, please follow these steps:
