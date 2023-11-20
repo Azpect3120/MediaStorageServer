@@ -195,6 +195,50 @@ NOTE: Images will be deleted when its parent folder is deleted.
 
 ### <a id="uploading-images"></a> Uploading Images
 
+Images can be uploaded through forms on a web application. Each "flavor" or framework will do it slightly differently the only information that must remain constant is that the image must be uploaded from a form with the name `media_upload`. Send a `POST` request to the `/images/<folder_id>` endpoint with the form data.
+
+HTML Example
+
+```html
+    <input type="file" id="fileInput" />
+    <button onclick="uploadFile()"> Upload </button>
+
+    <script>
+      function uploadFile() {
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+
+        const formData = new FormData();
+        formData.append("media_upload", file);
+
+        fetch("http://localhost:3000/images/<folder_id>", {
+            method: "POST",
+            body: formData,
+        })
+        .then(res => res.json())
+        .then(data => console.log(data));
+      }
+    </script>
+
+```
+
+
+Ex. Response
+
+```json
+  {
+    "image": {
+      "ID": "image-id",
+      "FolderId": "generated-id-here",
+      "Name": "image-name.jpg",
+      "Size": 940184,
+      "Format": "image/jpeg",
+      "UploadedAt": "timestamp",
+      "Path": "uploads/generated-id-here/image-id.jpg"
+    }
+  }
+```
+
 ### <a id="getting-images"></a> Getting Images
 
 An images meta data can be viewed by sending a `GET` request to the `/images/<image_id>` endpoint. The `path` property that is returned can be used to display the image.
@@ -208,13 +252,13 @@ Ex. Response
 ```json
 {
   "image": {
-    "ID": "imageID",
-    "FolderId": "folderID",
-    "Name": "image.jpg",
-    "Size": 66533,
+    "ID": "image-id",
+    "FolderId": "generated-id-here",
+    "Name": "image-name.jpg",
+    "Size": 940184,
     "Format": "image/jpeg",
     "UploadedAt": "timestamp",
-    "Path": "uploads/<folder_id>/<image_id>.jpg"
+    "Path": "uploads/generated-id-here/image-id.jpg"
   },
   "status": 200
 }
