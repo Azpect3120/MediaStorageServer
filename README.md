@@ -195,7 +195,7 @@ NOTE: Images will be deleted when its parent folder is deleted.
 
 ### <a id="uploading-images"></a> Uploading Images
 
-Images can be uploaded through forms on a web application. Each "flavor" or framework will do it slightly differently the only information that must remain constant is that the image must be uploaded from a form with the name `media_upload`. Send a `POST` request to the `/images/<folder_id>` endpoint with the form data.
+Images can be uploaded through forms on a web application. Each "flavor" or framework will do it slightly differently the only information that must remain constant is that the image must be uploaded from a form with the name `media_upload`. Send a `POST` request to the `/images/<folder_id>` endpoint with the form data. The endpoint response will be stored in the `data` variables in the following examples.
 
 HTML Example
 
@@ -260,7 +260,6 @@ React Example
 
   export default FileUploadComponent;
 ```
-
 
 Ex. Response
 
