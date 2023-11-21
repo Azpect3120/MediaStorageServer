@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>File Upload Example</title>
+    </head>
+    <body>
+        <h1>File Upload Example</h1>
+        <input type="file" id="fileInput" />
+        <button onclick="uploadFile()">Upload</button>
+        <img src="" id="imageOutput" />
+        <a href="" id="linkOutput" target="_blank"> Image </a>
+        <p id="message"></p>
+
+        <script>
+            function uploadFile() {
+                const fileInput = document.getElementById("fileInput");
+                const file = fileInput.files[0];
+
+                if (!file) {
+                    alert("Please select a file to upload.");
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append("media_upload", file);
+
+                fetch("<host_url>/images/<folder_id>", {
+                    method: "POST",
+                    body: formData,
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log(data);
+                        document.getElementById("imageOutput").src =
+                            `<host_url>/${data.image.Path}`;
+                        document.getElementById("linkOutput").href =
+                            `<host_url>/${data.image.Path}`;
+
+                        document.getElementById("message").textContent =
+                            `File upload: ${data.image.Name}`;
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        document.getElementById("message").textContent =
+                            "Error uploading the file.";
+                    });
+            }
+        </script>
+    </body>
+</html>
