@@ -54,7 +54,8 @@ Follow these steps to get the project up and running on your local machine.
 2. Set up your PostgreSQL database and configure the connection details in the `.env` file:
 
 ```.env
-  # This url can found in the dashboard of most PSQL hosts or can be constructed using the required pieces
+  # This url can found in the dashboard of most PSQL hosts,
+  # or it can be constructed using the required pieces
   db_url=your-connection-url-here
 ```
 
