@@ -36,22 +36,25 @@ func CreateFolder (db *database.Database, root string, ctx *gin.Context) {
 	}
 
 	// Create folder in database
-	folder, err := db.CreateFolder(req.Name)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+	ch := make(chan models.FolderChannel)
+	go db.CreateFolder(ch, req.Name)
+	res := <- ch
+
+	if res.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": res.Error.Error() })
 		return
 	}
 
 	// Create folder in file system
-	newFolderPath := filepath.Join(root, folder.ID)
+	newFolderPath := filepath.Join(root, res.Folder.ID)
 
-	err = os.Mkdir(newFolderPath, 0755)
+	err := os.Mkdir(newFolderPath, 0755)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": err.Error() })
 	}
 
 	// Return newly created folder 
-	ctx.JSON(http.StatusCreated, gin.H{ "status": http.StatusCreated, "folder": folder })
+	ctx.JSON(http.StatusCreated, gin.H{ "status": http.StatusCreated, "folder": res.Folder })
 }
 
 // Gets a folder
@@ -59,9 +62,11 @@ func GetFolder (db *database.Database, root string, ctx *gin.Context) {
 	id := ctx.Param("id")
 	
 	// Get folder meta data from database
-	folder, err := db.GetFolder(id)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": err.Error() })
+	ch := make(chan models.FolderChannel)
+	go db.GetFolder(ch, id)
+	res := <- ch
+	if res.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": res.Error.Error() })
 		return
 	}
 
@@ -76,14 +81,20 @@ func GetFolder (db *database.Database, root string, ctx *gin.Context) {
 
 	var images []*models.Image = []*models.Image{}
 
+	// BAD NEWS HERE!!!!!!
+	// FIX THIS WITH A WAIT GROUP
 	for _, file := range files {
 		if !file.IsDir() {
-			image, _ := db.GetImage(strings.Split(file.Name(), ".")[0])
-			images = append(images, image)
+			ch := make(chan models.ImageChannel)
+			go db.GetImage(ch, strings.Split(file.Name(), ".")[0])
+			res := <- ch
+
+			images = append(images, res.Image)
+			close(ch)
 		}
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "folder": folder, "images": images })
+	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "folder": res.Folder, "images": images })
 }
 
 // Updates a folder
@@ -98,20 +109,25 @@ func UpdateFolder (db *database.Database, root string, ctx *gin.Context) {
 	}
 
 	// Update folder in database
-	err := db.UpdateFolder(id, folder)
+	ch := make(chan error)
+	go db.UpdateFolder(ch, id, folder)
+	err := <- ch
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
 		return
 	}
 
 	// Get updated folder from database
-	folder, err = db.GetFolder(id)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+	chF := make(chan models.FolderChannel)
+	go db.GetFolder(chF, id)
+	res := <- chF
+
+	if res.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": res.Error.Error() })
 		return
 	}
 	
-	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "folder": folder })
+	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "folder": res.Folder })
 }
 
 // Deletes a folder
@@ -119,7 +135,10 @@ func DeleteFolder (db *database.Database, root string, ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	// Delete folder from database
-	err := db.DeleteFolder(id)
+	ch := make(chan error)
+	go db.DeleteFolder(ch, id)
+	err := <- ch
+
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
 		return

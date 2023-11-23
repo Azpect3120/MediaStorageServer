@@ -33,7 +33,11 @@ func CreateImage (db *database.Database, root string, ctx *gin.Context) {
 	}
 
 	// Create image in database: updates image object
-	if err = db.CreateImage(image); err != nil {
+	ch := make(chan error)
+	go db.CreateImage(ch, image)
+	err = <- ch
+
+	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
 		return
 	}
@@ -64,13 +68,16 @@ func CreateImage (db *database.Database, root string, ctx *gin.Context) {
 func GetImage (db *database.Database, root string, ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	image, err := db.GetImage(id)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+	ch := make(chan models.ImageChannel)
+	go db.GetImage(ch, id)
+	res := <- ch
+
+	if res.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": res.Error.Error() })
 		return
 	}
 	
-	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "image": image })
+	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "image": res.Image })
 }
 
 // Deletes a image
@@ -78,13 +85,20 @@ func DeleteImage (db *database.Database, root string, ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	// Delete image from database
-	if err := db.DeleteImage(id); err != nil {
+	ch := make(chan error)
+	go db.DeleteImage(ch, id)
+	err := <- ch
+
+	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
 		return
 	}
 
 	// Delete image from file system
-	err := deleteFile(root, id)
+	chFS := make(chan error)
+	go deleteFile(chFS, root, id)
+	err = <- chFS
+
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
 		return
@@ -94,7 +108,7 @@ func DeleteImage (db *database.Database, root string, ctx *gin.Context) {
 }
 
 // Walk the file path and delete a file using its ID
-func deleteFile (root, id string) error {
+func deleteFile (ch chan error, root, id string) {
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -113,5 +127,5 @@ func deleteFile (root, id string) error {
 		}
 		return nil
 	})
-	return err	
+	ch <- err
 }
