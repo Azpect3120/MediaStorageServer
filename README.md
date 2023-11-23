@@ -150,6 +150,7 @@ Ex. Response
       "Name": "folder-name-here",
       "CreatedAt": "timestamp"
     },
+    "count": 1,
     "images": [
       {
         "ID": "image-id",

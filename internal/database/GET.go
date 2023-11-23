@@ -30,3 +30,30 @@ func (db *Database) GetImage (ch chan models.ImageChannel, id string) {
 
 	ch <- models.ImageChannel{ Image: &image, Error: nil }
 }
+
+func (db *Database) GetImages (ch chan models.ImagesChannel, id string) {
+	var statement string = "SELECT * FROM images WHERE folderid = $1;"
+	
+	var images []*models.Image
+
+	rows, err := db.database.Query(statement, id);
+	if err != nil {
+		ch <- models.ImagesChannel{ Images: nil, Error: err }
+		return
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var image models.Image
+
+		if err := rows.Scan(&image.ID, &image.FolderId, &image.Name, &image.Size, &image.Format, &image.UploadedAt); err != nil {
+			ch <- models.ImagesChannel{ Images: nil, Error: err }
+			return 
+		}
+
+		images = append(images, &image)
+	}
+
+	ch <- models.ImagesChannel{ Images: images, Error: nil }
+}

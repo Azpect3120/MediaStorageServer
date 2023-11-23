@@ -65,36 +65,23 @@ func GetFolder (db *database.Database, root string, ctx *gin.Context) {
 	ch := make(chan models.FolderChannel)
 	go db.GetFolder(ch, id)
 	res := <- ch
+
 	if res.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": res.Error.Error() })
 		return
 	}
 
-	// Get images from the folder 
-	folderPath := filepath.Join(root, id)
+	// Get images from the database
+	chImg := make(chan models.ImagesChannel)
+	go db.GetImages(chImg, res.Folder.ID)
+	imgRes := <- chImg
 
-	files, err := os.ReadDir(folderPath)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": err.Error() })
+	if imgRes.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": imgRes.Error.Error() })
 		return
 	}
 
-	var images []*models.Image = []*models.Image{}
-
-	// BAD NEWS HERE!!!!!!
-	// FIX THIS WITH A WAIT GROUP
-	for _, file := range files {
-		if !file.IsDir() {
-			ch := make(chan models.ImageChannel)
-			go db.GetImage(ch, strings.Split(file.Name(), ".")[0])
-			res := <- ch
-
-			images = append(images, res.Image)
-			close(ch)
-		}
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "folder": res.Folder, "images": images })
+	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "folder": res.Folder, "images": imgRes.Images, "count": len(imgRes.Images) })
 }
 
 // Updates a folder
