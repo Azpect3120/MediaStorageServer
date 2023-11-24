@@ -24,14 +24,14 @@ A simple media storage server for storing various types of media. Can be used fo
 
 ## Introduction
 
-This project provides a basic template for building a Go media storage server. It includes CRUD functionality for both folders and images. The images are stored within a folder which creates a more structured storage system. URLs are generated for use displaying the media stored.
+This project provides a basic template for building a Go media storage server. It includes CRUD functionality for both folders and images. The images are stored within a folder which creates a more structured storage system. URLs are generated for use in displaying the media stored.
 
 ## Features
 
 - Image & video storage.
 - Folders for sorting images.
-- Meta data storage in a database.
-- Generate a URL to display media stored.
+- Metadata storage in a database.
+- Generate a URL to display the media stored.
 
 ## Getting Started
 
@@ -54,7 +54,7 @@ Follow these steps to get the project up and running on your local machine.
 2. Set up your PostgreSQL database and configure the connection details in the `.env` file:
 
 ```.env
-  # This url can found in the dashboard of most PSQL hosts,
+  # This URL can be found in the dashboard of most PSQL hosts,
   # or it can be constructed using the required pieces
   db_url=your-connection-url-here
 ```
@@ -72,9 +72,9 @@ Follow these steps to get the project up and running on your local machine.
   ./bin/server
 ```
 
-Your authentication server should now be running on `http://localhost:3000`.
+Your media storage server should now be running on `http://localhost:3000`.
 
-The servers port can be changed in the `cmd/mediaStorageServer/main.go` file:
+The server's port can be changed in the `cmd/mediaStorageServer/main.go` file:
 
 ```go
   err := server.Run("NEW PORT HERE")
@@ -287,7 +287,7 @@ Ex. Response
 
 ### <a id="getting-images"></a> Getting Images
 
-An images meta data can be viewed by sending a `GET` request to the `/images/<image_id>` endpoint. The `path` property that is returned can be used to display the image.
+An images metadata can be viewed by sending a `GET` request to the `/images/<image_id>` endpoint. The `path` property that is returned can be used to display the image.
 
 ```bash
   GET http://localhost:3000/images/<image_id>
@@ -312,7 +312,7 @@ Ex. Response
 
 ### <a id="displaying-images"></a> Displaying Images
 
-In web applications, the images can be displaying using their path, which can be found in the images meta data. Simply use the path as the `src` attribute in any web application.
+In web applications, the images can be displayed using their path, which can be found in the image metadata. Simply use the path as the `src` attribute in any web application.
 
 ```html
   <img src="http://localhost:3000/uploads/<folder_id>/<image_id>" alt="Media Storage Image">
