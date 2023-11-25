@@ -142,7 +142,9 @@ func UpdateFolder (cache *cache.Cache, db *database.Database, root string, ctx *
 }
 
 // Deletes a folder
-func DeleteFolder (db *database.Database, root string, ctx *gin.Context) {
+func DeleteFolder (cache *cache.Cache, db *database.Database, root string, ctx *gin.Context) {
+	cache.ResetRequest(ctx.Request.URL.String())
+
 	id := ctx.Param("id")
 
 	// Delete folder from database

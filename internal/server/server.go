@@ -1,9 +1,7 @@
 package internal
 
 import (
-	"encoding/json"
 	"errors"
-	"net/http"
 	"os"
 	"path/filepath"
 
@@ -100,7 +98,7 @@ func (s *Server) LoadRoutes(db *database.Database) {
 	s.Router.GET("/folders/:id", func(ctx *gin.Context) { routes.GetFolder(s.FolderCache, db, s.UploadRoot, ctx) })
 	s.Router.POST("/folders", func(ctx *gin.Context) { routes.CreateFolder(db, s.UploadRoot, ctx) })
 	s.Router.PUT("/folders/:id", func(ctx *gin.Context) { routes.UpdateFolder(s.FolderCache, db, s.UploadRoot, ctx) })
-	s.Router.DELETE("/folders/:id", func(ctx *gin.Context) { routes.DeleteFolder(db, s.UploadRoot, ctx) })
+	s.Router.DELETE("/folders/:id", func(ctx *gin.Context) { routes.DeleteFolder(s.FolderCache, db, s.UploadRoot, ctx) })
 
 	s.Router.GET("/images/:id", func(ctx *gin.Context) { routes.GetImage(db, s.UploadRoot, ctx) })
 	s.Router.POST("/images/:id", func(ctx *gin.Context) { routes.CreateImage(s.FolderCache, db, s.UploadRoot, ctx) })
