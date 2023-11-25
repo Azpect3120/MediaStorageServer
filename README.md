@@ -318,7 +318,7 @@ Ex. Response
 }
 ```
 
-### <a id="displaying-images"></a> Displaying Media
+### <a id="displaying-media"></a> Displaying Media
 
 In web applications, the images can be displayed using their path, which can be found in the image metadata. Simply use the path as the `src` attribute in any web application.
 
@@ -326,7 +326,7 @@ In web applications, the images can be displayed using their path, which can be 
   <img src="http://localhost:3000/uploads/<folder_id>/<image_id>" alt="Media Storage Image">
 ```
 
-### <a id="deleting-images"></a> Deleting Media
+### <a id="deleting-media"></a> Deleting Media
 
 An image can be deleted by sending a `DELETE` request to the `/images/<image_id>` endpoint. Nothing is returned from this request unless an error is encountered.
 
