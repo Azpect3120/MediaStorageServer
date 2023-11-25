@@ -14,3 +14,8 @@ type ImagesChannel struct {
 	Images []*Image
 	Error error
 }
+
+type ReportChannel struct {
+	Report Report
+	Error error
+}

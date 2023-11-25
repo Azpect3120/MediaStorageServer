@@ -93,4 +93,6 @@ func (s *Server) LoadRoutes(db *database.Database) {
 	s.Router.GET("/images/:id", func(ctx *gin.Context) { routes.GetImage(db, s.UploadRoot, ctx) })
 	s.Router.POST("/images/:id", func(ctx *gin.Context) { routes.CreateImage(db, s.UploadRoot, ctx) })
 	s.Router.DELETE("/images/:id", func(ctx *gin.Context) { routes.DeleteImage(db, s.UploadRoot, ctx) })
+
+	s.Router.GET("/reports/:id/:email", func(ctx *gin.Context) { routes.SendReport(db, ctx) })
 }
