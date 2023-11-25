@@ -1,12 +1,14 @@
 package routes
 
 import (
+	"encoding/json"
 	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 
+	"github.com/Azpect3120/MediaStorageServer/internal/cache"
 	"github.com/Azpect3120/MediaStorageServer/internal/database"
 	"github.com/Azpect3120/MediaStorageServer/internal/models"
 	"github.com/gin-gonic/gin"
@@ -58,7 +60,18 @@ func CreateFolder (db *database.Database, root string, ctx *gin.Context) {
 }
 
 // Gets a folder
-func GetFolder (db *database.Database, root string, ctx *gin.Context) {
+func GetFolder (cache *cache.Cache, db *database.Database, root string, ctx *gin.Context) {
+	// Check cache for request
+	request := ctx.Request.URL.String()
+
+	if response, exists := cache.GetResponse(request); exists {
+		var data GetFolderResponse
+		if err := json.Unmarshal(response, &data); err == nil {
+			ctx.JSON(http.StatusOK, data)
+			return
+		}
+	}
+
 	id := ctx.Param("id")
 	
 	// Get folder meta data from database
@@ -81,11 +94,22 @@ func GetFolder (db *database.Database, root string, ctx *gin.Context) {
 		return
 	}
 
+	// Add response and request to cache
+	response := GetFolderResponse{ Status: http.StatusOK, Folder: res.Folder, Images: imgRes.Images, Count: len(imgRes.Images) }
+	responseData, err := json.Marshal(response)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": err.Error() })
+		return
+	}
+	cache.AddResponse(request, responseData)
+
 	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "folder": res.Folder, "images": imgRes.Images, "count": len(imgRes.Images) })
 }
 
 // Updates a folder
-func UpdateFolder (db *database.Database, root string, ctx *gin.Context) {
+func UpdateFolder (cache *cache.Cache, db *database.Database, root string, ctx *gin.Context) {
+	cache.ResetRequest(ctx.Request.URL.String())
+
 	id := ctx.Param("id")
 
 	folder := &models.Folder{}

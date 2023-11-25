@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/Azpect3120/MediaStorageServer/internal/cache"
 	"github.com/Azpect3120/MediaStorageServer/internal/database"
 	"github.com/Azpect3120/MediaStorageServer/internal/models"
 	"github.com/gin-gonic/gin"
@@ -14,8 +15,10 @@ import (
 // Creates a image
 //
 // File upload must have the name 'media_upload'
-func CreateImage (db *database.Database, root string, ctx *gin.Context) {
+func CreateImage (cache *cache.Cache, db *database.Database, root string, ctx *gin.Context) {
 	folderId := ctx.Param("id")
+
+	cache.ResetRequest("/folders/" + folderId)
 
 	// Get file from request
 	file, err := ctx.FormFile("media_upload")

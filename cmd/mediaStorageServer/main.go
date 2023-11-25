@@ -14,6 +14,8 @@ func main() {
 
 	database := database.CreateDatabase()
 
+	server.SetupCache()
+
 	server.LoadRoutes(database)
 
 	err := server.Run("3000")
