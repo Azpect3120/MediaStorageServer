@@ -142,8 +142,11 @@ func UpdateFolder (cache *cache.Cache, db *database.Database, root string, ctx *
 }
 
 // Deletes a folder
-func DeleteFolder (cache *cache.Cache, db *database.Database, root string, ctx *gin.Context) {
-	cache.ResetRequest(ctx.Request.URL.String())
+func DeleteFolder (folderCache, imageCache *cache.Cache, db *database.Database, root string, ctx *gin.Context) {
+	folderCache.ResetRequest(ctx.Request.URL.String())
+
+	// Clear entire image cache
+	imageCache.Clear()
 
 	id := ctx.Param("id")
 

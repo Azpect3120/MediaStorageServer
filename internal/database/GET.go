@@ -58,3 +58,15 @@ func (db *Database) GetImages (ch chan models.ImagesChannel, id string) {
 
 	ch <- models.ImagesChannel{ Images: images, Error: nil }
 }
+
+func (db *Database) GetFolderID (ch chan models.IDChannel, id string) {
+	var statement string = "SELECT folderid FROM images WHERE id = $1"
+
+	var folderID string
+	if err := db.database.QueryRow(statement, id).Scan(&folderID); err != nil {
+		ch <- models.IDChannel{ID: "", Error: err}
+		return
+	}
+
+	ch <- models.IDChannel{ID: folderID, Error: nil}
+}

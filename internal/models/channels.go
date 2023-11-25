@@ -12,10 +12,15 @@ type ImageChannel struct {
 
 type ImagesChannel struct {
 	Images []*Image
+	Error  error
+}
+
+type IDChannel struct {
+	ID    string
 	Error error
 }
 
 type ReportChannel struct {
 	Report Report
-	Error error
+	Error  error
 }

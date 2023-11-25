@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"encoding/json"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -68,7 +69,18 @@ func CreateImage (cache *cache.Cache, db *database.Database, root string, ctx *g
 }
 
 // Gets a image
-func GetImage (db *database.Database, root string, ctx *gin.Context) {
+func GetImage (folderCache, imageCache *cache.Cache, db *database.Database, root string, ctx *gin.Context) {
+	// Check cache for request
+	request := ctx.Request.URL.String()
+
+	if response, exists := imageCache.GetResponse(request); exists {
+		var data GetImageResponse
+		if err := json.Unmarshal(response, &data); err == nil {
+			ctx.JSON(http.StatusOK, data)
+			return
+		}
+	}
+
 	id := ctx.Param("id")
 
 	ch := make(chan models.ImageChannel)
@@ -79,13 +91,40 @@ func GetImage (db *database.Database, root string, ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": res.Error.Error() })
 		return
 	}
+
+	// Add response and request to cache
+	response := GetImageResponse{ Status: http.StatusOK, Image: res.Image }
+	responseData, err := json.Marshal(response)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": err.Error() })
+		return
+	}
+	imageCache.AddResponse(request, responseData)
+
+	// Remove the parent folder from the cache 
+	folderCache.ResetRequest("/folders/" + res.Image.FolderId)
 	
 	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "image": res.Image })
 }
 
 // Deletes a image
-func DeleteImage (db *database.Database, root string, ctx *gin.Context) {
+func DeleteImage (folderCache, imageCache *cache.Cache, db *database.Database, root string, ctx *gin.Context) {
+	// Remove image from cache
+	imageCache.ResetRequest(ctx.Request.URL.String())
+
 	id := ctx.Param("id")
+
+	chFID := make(chan models.IDChannel)
+	go db.GetFolderID(chFID, id)
+	res := <- chFID
+
+	if res.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": res.Error.Error() })
+		return
+	}
+
+	// Remove parent folder from cache
+	folderCache.ResetRequest("/folders/" + res.ID)
 
 	// Delete image from database
 	ch := make(chan error)

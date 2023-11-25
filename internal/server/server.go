@@ -14,10 +14,11 @@ import (
 )
 
 type Server struct {
-	Router     *gin.Engine
-	Config     cors.Config
-	UploadRoot string
+	Router      *gin.Engine
+	Config      cors.Config
+	UploadRoot  string
 	FolderCache *cache.Cache
+	ImageCache  *cache.Cache
 }
 
 // CreateServer creates a new server object with default values.
@@ -29,8 +30,8 @@ func CreateServer() *Server {
 	gin.SetMode(gin.DebugMode)
 
 	var server *Server = &Server{
-		Router: gin.Default(),
-		Config: cors.DefaultConfig(),
+		Router:     gin.Default(),
+		Config:     cors.DefaultConfig(),
 		UploadRoot: "",
 	}
 
@@ -45,22 +46,24 @@ func CreateServer() *Server {
 // Path should point to the '/uploads' directory. ex: '~/Documents/media-server/uploads'.
 //
 // Path can relative or absolute.
-func (s *Server) DefineUploadRoot (path string) (string, error) {
+func (s *Server) DefineUploadRoot(path string) (string, error) {
 	absPath, err := filepath.Abs(path)
 	if err != nil {
-		return "", err 
+		return "", err
 	}
 
 	s.UploadRoot = absPath
 	return s.UploadRoot, nil
 }
 
-
 // SetupCache sets up the server's various caches
 //
-// Folder cache stores 10 most recent GET requests to the '/folders endpoint'
-func (s *Server) SetupCache () {
+// Folder cache stores 10 most recent GET requests to the '/folders/:id' endpoint
+//
+// Image cache stores 25 most recent GET request to the '/images/:id' endpoint
+func (s *Server) SetupCache() {
 	s.FolderCache = cache.NewCache(10)
+	s.ImageCache = cache.NewCache(25)
 }
 
 // Run runs the server on the provided port.
@@ -98,11 +101,11 @@ func (s *Server) LoadRoutes(db *database.Database) {
 	s.Router.GET("/folders/:id", func(ctx *gin.Context) { routes.GetFolder(s.FolderCache, db, s.UploadRoot, ctx) })
 	s.Router.POST("/folders", func(ctx *gin.Context) { routes.CreateFolder(db, s.UploadRoot, ctx) })
 	s.Router.PUT("/folders/:id", func(ctx *gin.Context) { routes.UpdateFolder(s.FolderCache, db, s.UploadRoot, ctx) })
-	s.Router.DELETE("/folders/:id", func(ctx *gin.Context) { routes.DeleteFolder(s.FolderCache, db, s.UploadRoot, ctx) })
+	s.Router.DELETE("/folders/:id", func(ctx *gin.Context) { routes.DeleteFolder(s.FolderCache, s.ImageCache, db, s.UploadRoot, ctx) })
 
-	s.Router.GET("/images/:id", func(ctx *gin.Context) { routes.GetImage(db, s.UploadRoot, ctx) })
+	s.Router.GET("/images/:id", func(ctx *gin.Context) { routes.GetImage(s.FolderCache, s.ImageCache, db, s.UploadRoot, ctx) })
 	s.Router.POST("/images/:id", func(ctx *gin.Context) { routes.CreateImage(s.FolderCache, db, s.UploadRoot, ctx) })
-	s.Router.DELETE("/images/:id", func(ctx *gin.Context) { routes.DeleteImage(db, s.UploadRoot, ctx) })
+	s.Router.DELETE("/images/:id", func(ctx *gin.Context) { routes.DeleteImage(s.FolderCache, s.ImageCache, db, s.UploadRoot, ctx) })
 
 	s.Router.GET("/reports/:id/:email", func(ctx *gin.Context) { routes.SendReport(db, ctx) })
 }

@@ -8,3 +8,8 @@ type GetFolderResponse struct {
 	Images []*models.Image `josn:"images"`
 	Count  int             `json:"count"`
 }
+
+type GetImageResponse struct {
+	Status int           `json:"status"`
+	Image  *models.Image `json:"image"`
+}

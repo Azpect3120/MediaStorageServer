@@ -47,3 +47,9 @@ func (c *Cache) ResetRequest(request string) {
 	}
 	c.Requests = requests
 }
+
+// Clear clears the entire cache but does not reset the size
+func (c *Cache) Clear() {
+	c.Requests = []string{}
+	c.Responses = make(map[string][]byte)
+}
