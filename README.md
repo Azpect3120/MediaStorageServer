@@ -19,6 +19,7 @@ A simple media storage server for storing various types of media. Can be used fo
     -   [Getting Images](#getting-images)
     -   [Displaying Images](#displaying-images)
     -   [Deleting Images](#deleting-images)
+    -   [Generating Reports](#generating-reports)
 -   [Contributing](#contributing)
 -   [License](#license)
 
@@ -324,6 +325,14 @@ An image can be deleted by sending a `DELETE` request to the `/images/<image_id>
 
 ```bash
   DELETE http://localhost:3000/images/<image_id>
+```
+
+### <a id="generating-reports"></a> Generating Reports
+
+A folder report can be generated and sent to your email by sending a `GET` request to the `/reports/:id/:email` endpoint.
+
+```bash
+  GET http://localhost:3000/reports/<folder_id>/<your_email>
 ```
 
 ## Contributing
