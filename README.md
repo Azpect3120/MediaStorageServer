@@ -15,10 +15,10 @@ A simple media storage server for storing various types of media. Can be used fo
     -   [Getting Folders](#getting-folders)
     -   [Editing Folders](#editing-folders)
     -   [Deleting Folders](#deleting-folders)
-    -   [Uploading Images](#uploading-images)
-    -   [Getting Images](#getting-images)
-    -   [Displaying Images](#displaying-images)
-    -   [Deleting Images](#deleting-images)
+    -   [Uploading Media](#uploading-media)
+    -   [Getting Media](#getting-media)
+    -   [Displaying Media](#displaying-media)
+    -   [Deleting Media](#deleting-media)
     -   [Generating Reports](#generating-reports)
 -   [Contributing](#contributing)
 -   [License](#license)
@@ -34,7 +34,7 @@ This project provides a basic template for building a Go media storage server. I
 - Metadata storage in a database.
 - Generate a URL to display the media stored.
 - Generate reports and have them sent to your email.
-- Cache for quick folder retrieval.
+- Cache for quick media and folder retrieval.
 
 ## Getting Started
 
@@ -209,7 +209,7 @@ NOTE: Images will be deleted when its parent folder is deleted.
   DELETE http://localhost:3000/folders/<folder_id>
 ```
 
-### <a id="uploading-images"></a> Uploading Images
+### <a id="uploading-media"></a> Uploading Media
 
 Images can be uploaded through forms on a web application. Each "flavor" or framework will do it slightly differently the only information that must remain constant is that the image must be uploaded from a form with the name `media_upload`. Send a `POST` request to the `/images/<folder_id>` endpoint with the form data. The endpoint response will be stored in the `data` variables in the following examples.
 
@@ -293,7 +293,7 @@ Ex. Response
   }
 ```
 
-### <a id="getting-images"></a> Getting Images
+### <a id="getting-media"></a> Getting Media
 
 An images metadata can be viewed by sending a `GET` request to the `/images/<image_id>` endpoint. The `path` property that is returned can be used to display the image.
 
@@ -318,7 +318,7 @@ Ex. Response
 }
 ```
 
-### <a id="displaying-images"></a> Displaying Images
+### <a id="displaying-images"></a> Displaying Media
 
 In web applications, the images can be displayed using their path, which can be found in the image metadata. Simply use the path as the `src` attribute in any web application.
 
@@ -326,7 +326,7 @@ In web applications, the images can be displayed using their path, which can be 
   <img src="http://localhost:3000/uploads/<folder_id>/<image_id>" alt="Media Storage Image">
 ```
 
-### <a id="deleting-images"></a> Deleting Images
+### <a id="deleting-images"></a> Deleting Media
 
 An image can be deleted by sending a `DELETE` request to the `/images/<image_id>` endpoint. Nothing is returned from this request unless an error is encountered.
 
