@@ -11,13 +11,13 @@ A simple media storage server for storing various types of media. Can be used fo
     -   [Installation](#installation)
     -   [Database](#database)
 -   [Usage](#usage)
-    - Folders
+    - [Folders](#creating-folders)
         -   [Creating Folders](#creating-folders)
         -   [Getting Folders](#getting-folders)
         -   [Editing Folders](#editing-folders)
         -   [Deleting Folders](#deleting-folders)
-    - Media
-        -   [Uploading Media](#uploading-media)
+    - [Media](#uploading-media)
+        -   [Uploading. Media](#uploading-media)
         -   [Getting Media](#getting-media)
         -   [Displaying Media](#displaying-media)
         -   [Deleting Media](#deleting-media)
