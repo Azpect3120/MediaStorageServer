@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/Azpect3120/MediaStorageServer/internal"
+	"github.com/Azpect3120/MediaStorageServer/internal/server"
 	"github.com/Azpect3120/MediaStorageServer/internal/database"
 )
 
