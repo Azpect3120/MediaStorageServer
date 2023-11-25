@@ -25,7 +25,7 @@ A simple media storage server for storing various types of media. Can be used fo
 
 ## Introduction
 
-This project provides a basic template for building a Go media storage server. It includes CRUD functionality for both folders and images. The images are stored within a folder which creates a more structured storage system. URLs are generated for use in displaying the media stored.
+This project provides a basic template for building a Go media storage server. It includes CRUD functionality for both folders and images. The images are stored within a folder which creates a more structured storage system. URLs are generated for use in displaying the media stored. The `/images` endpoints can be used to store both image and video media.
 
 ## Features
 
