@@ -1,10 +1,8 @@
 package models
 
-import "time"
-
 type Report struct {
 	FolderName string
-	CreatedAt  time.Time
+	CreatedAt  string
 	MediaCount int
 	Media      []*MediaData
 }

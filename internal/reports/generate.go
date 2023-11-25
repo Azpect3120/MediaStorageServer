@@ -23,7 +23,7 @@ func Generate(ch chan models.ReportChannel, db *database.Database, id string) {
 	}
 
 	report.FolderName = resF.Folder.Name
-	report.CreatedAt = resF.Folder.CreatedAt
+	report.CreatedAt = resF.Folder.CreatedAt.Format("Mon, Jan 2, 2006 at 3:04pm")
 
 	chI := make(chan models.ImagesChannel)
 	go db.GetImages(chI, id)
