@@ -52,7 +52,7 @@ func (db *Database) GetImages (ch chan models.ImagesChannel, id string) {
 			return 
 		}
 
-		image.Path = filepath.Join("uploads", image.FolderId, image.ID)
+		image.Path = filepath.Join("uploads", image.FolderId, image.ID) + filepath.Ext(image.Name)
 		images = append(images, &image)
 	}
 
