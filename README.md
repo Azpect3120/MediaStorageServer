@@ -58,6 +58,11 @@ Follow these steps to get the project up and running on your local machine.
   # This URL can be found in the dashboard of most PSQL hosts,
   # or it can be constructed using the required pieces
   db_url=your-connection-url-here
+
+  # For more information visit this link:
+  # https://www.hostinger.com/tutorials/how-to-use-free-google-smtp-server
+  smtp_email=your-email-here
+  smtp_password=your-email-app-password-here
 ```
 
 3. Install dependencies:
