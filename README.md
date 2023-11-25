@@ -33,6 +33,8 @@ This project provides a basic template for building a Go media storage server. I
 - Folders for sorting images.
 - Metadata storage in a database.
 - Generate a URL to display the media stored.
+- Generate reports and have them sent to your email.
+- Cache for quick folder retrieval.
 
 ## Getting Started
 
