@@ -3,7 +3,6 @@ module github.com/Azpect3120/MediaStorageServer
 go 1.21
 
 require (
-	github.com/chai2010/tiff v0.0.0-20211005095045-4ec2aa243943
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/google/uuid v1.4.0
