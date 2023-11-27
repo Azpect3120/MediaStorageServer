@@ -5,12 +5,12 @@ A simple media storage server for storing various types of media. Can be used fo
 ## Table of Contents
 
 -   [Introduction](#introduction)
+-   [Version](#version)
 -   [Features](#features)
 -   [Getting Started](#getting-started)
     -   [Prerequisites](#prerequisites)
     -   [Installation](#installation)
     -   [Database](#database)
--   [Version](#version)
 -   [Usage](#usage)
     - [Folders](#creating-folders)
         -   [Creating Folders](#creating-folders)
@@ -29,6 +29,15 @@ A simple media storage server for storing various types of media. Can be used fo
 ## Introduction
 
 This project provides a basic template for building a Go media storage server. It includes CRUD functionality for both folders and images. The images are stored within a folder which creates a more structured storage system. URLs are generated for use in displaying the media stored. The `/images` endpoints can be used to store both image and video media.
+
+## Version
+
+All endpoint will be preceded by the version.
+
+Current version: 1.0.0
+
+Acceptable versions are...
+- /v1/
 
 ## Features
 
@@ -114,15 +123,6 @@ Once the server is up and running you will need to connect to a PostgreSQL datab
       uploadedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
 ```
-
-## Version
-
-All endpoint will be preceded by the version.
-
-Current version: 1.0.0
-
-Acceptable versions are...
-- /v1/
 
 ## Usage
 
