@@ -22,7 +22,7 @@ import (
 func CreateImage (cache *cache.Cache, db *database.Database, root string, ctx *gin.Context) {
 	folderId := ctx.Param("id")
 
-	cache.ResetRequest("/folders/" + folderId)
+	cache.ResetRequest("/v1/folders/" + folderId)
 
 	// Get file from request
 	file, err := ctx.FormFile("media_upload")
@@ -108,6 +108,8 @@ func CreateImage (cache *cache.Cache, db *database.Database, root string, ctx *g
 				ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
 				return
 			}
+
+		// Other media types
 		} else {
 			fmt.Println(image.Format)
 		}
@@ -174,7 +176,7 @@ func GetImage (folderCache, imageCache *cache.Cache, db *database.Database, root
 	imageCache.AddResponse(request, responseData)
 
 	// Remove the parent folder from the cache 
-	folderCache.ResetRequest("/folders/" + res.Image.FolderId)
+	folderCache.ResetRequest("/v1/folders/" + res.Image.FolderId)
 
 	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "image": res.Image })
 }
@@ -196,7 +198,7 @@ func DeleteImage (folderCache, imageCache *cache.Cache, db *database.Database, r
 	}
 
 	// Remove parent folder from cache
-	folderCache.ResetRequest("/folders/" + res.ID)
+	folderCache.ResetRequest("/v1/folders/" + res.ID)
 
 	// Delete image from database
 	ch := make(chan error)
