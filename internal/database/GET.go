@@ -32,7 +32,7 @@ func (db *Database) GetImage (ch chan models.ImageChannel, id string) {
 }
 
 func (db *Database) GetImages (ch chan models.ImagesChannel, id string) {
-	var statement string = "SELECT * FROM images WHERE folderid = $1;"
+	var statement string = "SELECT * FROM images WHERE folderid = $1 ORDER BY uploadedat DESC;"
 	
 	var images []*models.Image
 
@@ -72,7 +72,7 @@ func (db *Database) GetFolderID (ch chan models.IDChannel, id string) {
 }
 
 func (db *Database) GetImageMatches (ch chan models.ImagesChannel, size int64, folderID, id string) {
-	var statement string = "SELECT * FROM images WHERE size = $1 AND folderid = $2 AND id != $3;"
+	var statement string = "SELECT * FROM images WHERE size = $1 AND folderid = $2 AND id != $3 ORDER BY uploadedat;"
 
 	rows, err := db.database.Query(statement, size, folderID, id)
 	if err != nil {
