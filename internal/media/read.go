@@ -6,7 +6,11 @@ import (
 	"image"
 	"image/jpeg"
 	"image/png"
+	"image/gif"
 	"golang.org/x/image/webp"
+	"golang.org/x/image/bmp"
+	"golang.org/x/image/tiff"
+	"github.com/mat/besticon/ico"
 	"io"
 	"os"
 	"path/filepath"
@@ -31,16 +35,26 @@ func OpenImage(path string) (image.Image, error) {
 		file.Seek(0, 0)
 		img, err = png.Decode(file)
 		if err != nil {
-			// file2, err := os.Open(path)
-			// if err != nil {
-			// 	return nil, err
-			// }
-			// defer file2.Close()
 			file.Seek(0, 0)
 			img, err = webp.Decode(file)
 			if err != nil {
-				fmt.Printf("%+v\n", err)
-				return nil, err
+				file.Seek(0, 0)
+				img, err = gif.Decode(file)
+				if err != nil {
+					file.Seek(0, 0)
+					img, err = ico.Decode(file)
+					if err != nil {
+						file.Seek(0, 0)
+						img, err = tiff.Decode(file)
+						if err != nil {
+							file.Seek(0, 0)
+							img, err = bmp.Decode(file)
+							if err != nil {
+								return nil, err
+							}
+						}
+					}
+				}
 			}
 		}
 	}
