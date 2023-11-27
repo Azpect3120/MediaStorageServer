@@ -8,6 +8,7 @@ import (
 	"image/png"
 	"image/gif"
 	"golang.org/x/image/webp"
+	"golang.org/x/image/bmp"
 	"github.com/mat/besticon/ico"
 	"github.com/chai2010/tiff"
 	"io"
@@ -43,9 +44,14 @@ func OpenImage(path string) (image.Image, error) {
 					file.Seek(0, 0)
 					img, err = ico.Decode(file)
 					if err != nil {
+						file.Seek(0, 0)
 						img, err = tiff.Decode(file)
 						if err != nil {
-							return nil, err
+							file.Seek(0, 0)
+							img, err = bmp.Decode(file)
+							if err != nil {
+								return nil, err
+							}
 						}
 					}
 				}
