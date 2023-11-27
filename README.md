@@ -10,6 +10,7 @@ A simple media storage server for storing various types of media. Can be used fo
     -   [Prerequisites](#prerequisites)
     -   [Installation](#installation)
     -   [Database](#database)
+-   [Version](#version)
 -   [Usage](#usage)
     -   [Creating Folders](#creating-folders)
     -   [Getting Folders](#getting-folders)
@@ -110,6 +111,15 @@ Once the server is up and running you will need to connect to a PostgreSQL datab
       uploadedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
 ```
+
+## Version
+
+All endpoint will be preceded by the version.
+
+Current version: 1.0.0
+
+Acceptable versions are...
+- /v1/
 
 ## Usage
 
