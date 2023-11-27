@@ -1,9 +1,12 @@
 package media
 
 import (
+	"crypto/md5"
+	"fmt"
 	"image"
 	"image/jpeg"
 	"image/png"
+	"io"
 	"os"
 	"path/filepath"
 )
@@ -32,4 +35,26 @@ func OpenImage(path string) (image.Image, error) {
 	}
 
 	return img, nil
+}
+
+// Calculates a videos hash
+func CalculateHash (path string) (string, error) {
+	path, err := filepath.Abs(path)
+	if err != nil {
+		return "", err
+	}
+
+	file, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+
+	defer file.Close()
+
+	hash := md5.New()
+	if _, err := io.Copy(hash, file); err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%x", hash.Sum(nil)), nil
 }

@@ -2,6 +2,7 @@ package routes
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -83,16 +84,32 @@ func CreateImage (cache *cache.Cache, db *database.Database, root string, ctx *g
 
 	// Matches found
 	if len(matches) > 0 {
-		target, err := media.OpenImage("." + image.Path)
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
-			return
-		}
-		
-		match, found, err := media.CompareArray(target, matches)
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
-			return
+		var match *models.Image
+		var found bool = false
+
+		// Media is an image and can be compared using the 'image' library
+		if strings.Contains(image.Format, "image") {
+			target, err := media.OpenImage("." + image.Path)
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+				return
+			}
+			
+			match, found, err = media.CompareArray(target, matches)
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+				return
+			}
+
+		// Media is a video and must be compared using external libraries
+	 	} else if strings.Contains(image.Format, "video") {
+			match, found, err = media.CompareArrayVideos(image, matches)
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+				return
+			}
+		} else {
+			fmt.Println(image.Format)
 		}
 
 		if found {
