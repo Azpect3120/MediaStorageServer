@@ -32,7 +32,7 @@ This project provides a basic template for building a Go media storage server. I
 
 ## Version
 
-All endpoint will be preceded by the version.
+All endpoints will be preceded by the version. Excluding the `/uploads` endpoint which will remain constant throughout the versions.
 
 Current version: 1.0.0
 
