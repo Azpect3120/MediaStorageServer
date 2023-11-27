@@ -38,6 +38,7 @@ This project provides a basic template for building a Go media storage server. I
 - Generate a URL to display the media stored.
 - Generate reports and have them sent to your email.
 - Cache for quick media and folder retrieval.
+- Duplicate images are stored only once on the disk.
 
 ## Getting Started
 
