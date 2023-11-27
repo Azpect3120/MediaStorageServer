@@ -9,8 +9,10 @@ import (
 
 	"github.com/Azpect3120/MediaStorageServer/internal/cache"
 	"github.com/Azpect3120/MediaStorageServer/internal/database"
+	"github.com/Azpect3120/MediaStorageServer/internal/media"
 	"github.com/Azpect3120/MediaStorageServer/internal/models"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 // Creates a image
@@ -30,11 +32,16 @@ func CreateImage (cache *cache.Cache, db *database.Database, root string, ctx *g
 
 	// Create image object with values 
 	image := &models.Image{
+		ID: uuid.New().String(),
 		Name: file.Filename,
 		FolderId: folderId,
 		Size: file.Size,
 		Format: file.Header.Get("Content-Type"),
 	}
+
+	image.Path = filepath.Join("/uploads", image.FolderId, image.ID)
+	image.Path = image.Path + filepath.Ext(image.Name)
+
 
 	// Create image in database: updates image object
 	ch := make(chan error)
@@ -46,11 +53,13 @@ func CreateImage (cache *cache.Cache, db *database.Database, root string, ctx *g
 		return
 	}
 
-	// Join path to abs path and get extension
-	fullPath := filepath.Join(root, image.FolderId, image.ID) + filepath.Ext(image.Name)
-	image.Path = filepath.Join("uploads", image.FolderId, image.ID) + filepath.Ext(image.Name)
-
 	// Create image on file system using newly updated image object
+	fullPath, err := filepath.Abs("." + image.Path)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+		return
+	}
+
 	outputFile, err := os.Create(fullPath)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
@@ -65,7 +74,53 @@ func CreateImage (cache *cache.Cache, db *database.Database, root string, ctx *g
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{ "image": image })
+	// Locate a match in the database
+	matches, err := media.FindMatches(db, image)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+		return
+	}
+
+	// Matches found
+	if len(matches) > 0 {
+		target, err := media.OpenImage("." + image.Path)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+			return
+		}
+		
+		match, found, err := media.CompareArray(target, matches)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+			return
+		}
+
+		if found {
+			// Update path on the image object
+			image.Path = match.Path
+
+			// Update database to hold new path
+			chU := make(chan error)
+			go db.UpdateImage(chU, image)
+			err := <- chU
+
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+				return
+			}
+
+			// DELETE OLD FILE
+			chE := make(chan error)
+			go deleteFile(chE, root, image.ID)
+			err = <- chE
+
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
+				return
+			}
+		}
+	}
+	ctx.JSON(http.StatusOK, gin.H{ "status":http.StatusOK, "image": image })
 }
 
 // Gets a image
@@ -103,7 +158,7 @@ func GetImage (folderCache, imageCache *cache.Cache, db *database.Database, root
 
 	// Remove the parent folder from the cache 
 	folderCache.ResetRequest("/folders/" + res.Image.FolderId)
-	
+
 	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "image": res.Image })
 }
 

@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/Azpect3120/MediaStorageServer/internal/models"
-	"github.com/google/uuid"
 )
 
 // Create a folder in the database
@@ -43,12 +42,10 @@ func (db *Database) CreateFolder (ch chan models.FolderChannel, name string) {
 func (db *Database) CreateImage (ch chan error, image *models.Image) {
 	image.Name = strings.ToLower(image.Name)
 
-	image.ID = uuid.New().String()
-
 	// Insert into database
-	var statement string = "INSERT INTO images (id, folderid, name, type, size) VALUES ($1, $2, $3, $4, $5);"
+	var statement string = "INSERT INTO images (id, folderid, name, type, size, path) VALUES ($1, $2, $3, $4, $5,  $6);"
 
-	result, err := db.database.Exec(statement, image.ID, image.FolderId, image.Name, image.Format, image.Size)
+	result, err := db.database.Exec(statement, image.ID, image.FolderId, image.Name, image.Format, image.Size, image.Path)
 	if err != nil {
 
 		ch <- err 

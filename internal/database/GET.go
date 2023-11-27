@@ -22,7 +22,7 @@ func (db *Database) GetImage (ch chan models.ImageChannel, id string) {
 
 	var image models.Image 
 
-	if err := db.database.QueryRow(statement, id).Scan(&image.ID, &image.FolderId, &image.Name, &image.Size, &image.Format, &image.UploadedAt); err != nil {
+	if err := db.database.QueryRow(statement, id).Scan(&image.ID, &image.FolderId, &image.Name, &image.Size, &image.Format, &image.UploadedAt, &image.Path); err != nil {
 		ch <- models.ImageChannel{ Image: nil, Error: err }
 	}
 
@@ -47,12 +47,12 @@ func (db *Database) GetImages (ch chan models.ImagesChannel, id string) {
 	for rows.Next() {
 		var image models.Image
 
-		if err := rows.Scan(&image.ID, &image.FolderId, &image.Name, &image.Size, &image.Format, &image.UploadedAt); err != nil {
+		if err := rows.Scan(&image.ID, &image.FolderId, &image.Name, &image.Size, &image.Format, &image.UploadedAt, &image.Path); err != nil {
 			ch <- models.ImagesChannel{ Images: nil, Error: err }
 			return 
 		}
 
-		image.Path = filepath.Join("uploads", image.FolderId, image.ID) + filepath.Ext(image.Name)
+		// image.Path = filepath.Join("uploads", image.FolderId, image.ID) + filepath.Ext(image.Name)
 		images = append(images, &image)
 	}
 
@@ -69,4 +69,31 @@ func (db *Database) GetFolderID (ch chan models.IDChannel, id string) {
 	}
 
 	ch <- models.IDChannel{ID: folderID, Error: nil}
+}
+
+func (db *Database) GetImageMatches (ch chan models.ImagesChannel, size int64, folderID, id string) {
+	var statement string = "SELECT * FROM images WHERE size = $1 AND folderid = $2 AND id != $3;"
+
+	rows, err := db.database.Query(statement, size, folderID, id)
+	if err != nil {
+		ch <- models.ImagesChannel{Images: nil, Error: err}
+	}
+
+	defer rows.Close()
+
+	var images []*models.Image
+
+	for rows.Next() {
+		var image models.Image
+
+		if err := rows.Scan(&image.ID, &image.FolderId, &image.Name, &image.Size, &image.Format, &image.UploadedAt, &image.Path); err != nil {
+			ch <- models.ImagesChannel{ Images: nil, Error: err }
+			return 
+		}
+
+		// image.Path = filepath.Join("uploads", image.FolderId, image.ID) + filepath.Ext(image.Name)
+		images = append(images, &image)
+	}
+
+	ch <- models.ImagesChannel{Images: images, Error: nil}
 }
