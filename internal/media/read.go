@@ -26,19 +26,18 @@ func OpenImage(path string) (image.Image, error) {
 
 	defer file.Close()
 
-	fmt.Println(path)
-
 	img, err := jpeg.Decode(file)
 	if err != nil {
 		file.Seek(0, 0)
 		img, err = png.Decode(file)
 		if err != nil {
-			file2, err := os.Open(path)
-			if err != nil {
-				return nil, err
-			}
-			defer file2.Close()
-			img, err = webp.Decode(file2)
+			// file2, err := os.Open(path)
+			// if err != nil {
+			// 	return nil, err
+			// }
+			// defer file2.Close()
+			file.Seek(0, 0)
+			img, err = webp.Decode(file)
 			if err != nil {
 				fmt.Printf("%+v\n", err)
 				return nil, err
