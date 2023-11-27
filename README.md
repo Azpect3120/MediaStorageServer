@@ -156,7 +156,7 @@ Folder meta data and images can be viewed by sending a `GET` request to the `/fo
 NOTE: If a folder is not found, a PSQL error will be returned with a `400` error code.
 
 ```bash
-  GET http://localhost:3000/folders/<folder_id>
+  GET http://localhost:3000/<version>/folders/<folder_id>
 ```
 
 Ex. Response
@@ -216,7 +216,7 @@ A folder can be deleted by sending a `DELETE` request to the `/folders/<folder_i
 NOTE: Images will be deleted when its parent folder is deleted.
 
 ```bash
-  DELETE http://localhost:3000/folders/<folder_id>
+  DELETE http://localhost:3000/<version>/folders/<folder_id>
 ```
 
 ### <a id="uploading-media"></a> Uploading Media
@@ -237,7 +237,7 @@ HTML Example
         const formData = new FormData();
         formData.append("media_upload", file);
 
-        fetch("http://localhost:3000/images/<folder_id>", {
+        fetch("http://localhost:3000/<version>/images/<folder_id>", {
             method: "POST",
             body: formData,
         })
@@ -268,7 +268,7 @@ React Example
       const formData = new FormData();
       formData.append("media_upload", file);
 
-      fetch("http://localhost:3000/images/<folder_id>", {
+      fetch("http://localhost:3000/<version>/images/<folder_id>", {
           method: "POST",
           body: formData,
       })
@@ -308,7 +308,7 @@ Ex. Response
 An images metadata can be viewed by sending a `GET` request to the `/images/<image_id>` endpoint. The `path` property that is returned can be used to display the image.
 
 ```bash
-  GET http://localhost:3000/images/<image_id>
+  GET http://localhost:3000/<version>/images/<image_id>
 ```
 
 Ex. Response
@@ -341,7 +341,7 @@ In web applications, the images can be displayed using their path, which can be 
 An image can be deleted by sending a `DELETE` request to the `/images/<image_id>` endpoint. Nothing is returned from this request unless an error is encountered.
 
 ```bash
-  DELETE http://localhost:3000/images/<image_id>
+  DELETE http://localhost:3000/<version>/images/<image_id>
 ```
 
 ### <a id="generating-reports"></a> Generating Reports
@@ -349,7 +349,7 @@ An image can be deleted by sending a `DELETE` request to the `/images/<image_id>
 A folder report can be generated and sent to your email by sending a `GET` request to the `/reports/:id/:email` endpoint.
 
 ```bash
-  GET http://localhost:3000/reports/<folder_id>/<your_email>
+  GET http://localhost:3000/<version>/reports/<folder_id>/<your_email>
 ```
 
 ## Contributing
