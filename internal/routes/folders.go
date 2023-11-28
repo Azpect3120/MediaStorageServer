@@ -73,6 +73,12 @@ func GetFolder (cache *cache.Cache, db *database.Database, root string, ctx *gin
 	}
 
 	id := ctx.Param("id")
+
+	// Validate id
+	if valid := ValidateID(id); !valid {
+		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": "Please enter a valid id." })
+		return
+	}
 	
 	// Get folder meta data from database
 	ch := make(chan models.FolderChannel)
@@ -112,6 +118,12 @@ func UpdateFolder (cache *cache.Cache, db *database.Database, root string, ctx *
 
 	id := ctx.Param("id")
 
+	// Validate id
+	if valid := ValidateID(id); !valid {
+		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": "Please enter a valid id." })
+		return
+	}
+
 	folder := &models.Folder{}
 
 	if err := ctx.ShouldBindJSON(&folder); err != nil {
@@ -149,6 +161,12 @@ func DeleteFolder (folderCache, imageCache *cache.Cache, db *database.Database, 
 	imageCache.Clear()
 
 	id := ctx.Param("id")
+
+	// Validate id
+	if valid := ValidateID(id); !valid {
+		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": "Please enter a valid id." })
+		return
+	}
 
 	// Delete folder from database
 	ch := make(chan error)

@@ -16,9 +16,20 @@ func SendReport(db *database.Database, ctx *gin.Context) {
 	email := ctx.Param("email")
 
 	if id == "" || email == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": "Please provided required parameters"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": "Please provided required parameters."})
 		return
 	}
+
+	if valid := ValidateID(id); !valid {
+		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": "Please enter a valid id." })
+		return
+	}
+
+	if valid := ValidateEmail(email); !valid {
+		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": "Please enter a valid email." })
+		return
+	}
+
 
 	ch := make(chan models.ReportChannel)
 	go reports.Generate(ch, db, id)
@@ -26,6 +37,7 @@ func SendReport(db *database.Database, ctx *gin.Context) {
 
 	if res.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": res.Error.Error()})
+		return
 	}
 
 

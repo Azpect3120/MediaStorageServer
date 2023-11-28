@@ -22,6 +22,12 @@ import (
 func CreateImage (cache *cache.Cache, db *database.Database, root string, ctx *gin.Context) {
 	folderId := ctx.Param("id")
 
+	// Validate folder id
+	if valid := ValidateID(folderId); !valid {
+		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": "Please enter a valid id." })
+		return
+	}
+
 	cache.ResetRequest("/v1/folders/" + folderId)
 
 	// Get file from request
@@ -157,6 +163,12 @@ func GetImage (folderCache, imageCache *cache.Cache, db *database.Database, root
 
 	id := ctx.Param("id")
 
+	// Validate id
+	if valid := ValidateID(id); !valid {
+		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": "Please enter a valid id." })
+		return
+	}
+
 	ch := make(chan models.ImageChannel)
 	go db.GetImage(ch, id)
 	res := <- ch
@@ -187,6 +199,12 @@ func DeleteImage (folderCache, imageCache *cache.Cache, db *database.Database, r
 	imageCache.ResetRequest(ctx.Request.URL.String())
 
 	id := ctx.Param("id")
+
+	// Validate id
+	if valid := ValidateID(id); !valid {
+		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": "Please enter a valid id." })
+		return
+	}
 
 	chFID := make(chan models.IDChannel)
 	go db.GetFolderID(chFID, id)
