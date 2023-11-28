@@ -48,6 +48,7 @@ Acceptable versions are...
 - Generate reports and have them sent to your email.
 - Cache for quick media and folder retrieval.
 - Duplicate images are stored only once on the disk.
+- Supported media formats: [JPEG, PNG, WEBP, BMP, TIFF, ICO, MP4]
 
 ## Getting Started
 
