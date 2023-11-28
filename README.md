@@ -1,6 +1,6 @@
 # Media Storage Server
 
-A simple media storage server for storing various types of media. Can be used for images and videos.
+A simple media storage server for storing images and videos of various formats.
 
 ## Table of Contents
 
