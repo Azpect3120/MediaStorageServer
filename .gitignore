@@ -1,3 +1,4 @@
 .env
 /uploads
 test.html
+build.sh
