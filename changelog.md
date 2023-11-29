@@ -1,8 +1,6 @@
-# Change Log
-
 ## Version 1.0.0 Release
 
-#### Version Release 
+Version release: 11/29/2023
 
 ### Notes
 
