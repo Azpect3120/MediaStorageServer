@@ -13,13 +13,13 @@ echo "Linux arm64 built..."
 GOOS=linux GOARCH=arm go build -o builds/mediaStorageServer_linux_arm cmd/mediaStorageServer/main.go
 echo "Linux arm32 built..."
 
-GOOS=windows GOARCH=amd64 go build -o builds/mediaStorageServer_windows_amd64 cmd/mediaStorageServer/main.go
+GOOS=windows GOARCH=amd64 go build -o builds/mediaStorageServer_windows_amd64.exe cmd/mediaStorageServer/main.go
 echo "Windows amd64 built..."
-GOOS=windows GOARCH=386 go build -o builds/mediaStorageServer_windows_386 cmd/mediaStorageServer/main.go
+GOOS=windows GOARCH=386 go build -o builds/mediaStorageServer_windows_386.exe cmd/mediaStorageServer/main.go
 echo "Windows amd32 built..."
-GOOS=windows GOARCH=arm64 go build -o builds/mediaStorageServer_windows_arm64 cmd/mediaStorageServer/main.go
+GOOS=windows GOARCH=arm64 go build -o builds/mediaStorageServer_windows_arm64.exe cmd/mediaStorageServer/main.go
 echo "Windows arm64 built..."
-GOOS=windows GOARCH=arm go build -o builds/mediaStorageServer_windows_arm cmd/mediaStorageServer/main.go
+GOOS=windows GOARCH=arm go build -o builds/mediaStorageServer_windows_arm.exe cmd/mediaStorageServer/main.go
 echo "Windows arm32 built..."
 
 GOOS=darwin GOARCH=amd64 go build -o builds/mediaStorageServer_darwin_amd64 cmd/mediaStorageServer/main.go
