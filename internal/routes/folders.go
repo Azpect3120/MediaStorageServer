@@ -112,6 +112,12 @@ func GetFolder (cache *cache.Cache, db *database.Database, root string, ctx *gin
 	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "folder": res.Folder, "images": imgRes.Images, "count": len(imgRes.Images) })
 }
 
+// Gets a list of the images in a folder
+func GetFolderImages (cache *cache.Cache, db *database.Database, root string, ctx *gin.Context) {
+
+
+}
+
 // Updates a folder
 func UpdateFolder (cache *cache.Cache, db *database.Database, root string, ctx *gin.Context) {
 	cache.ResetRequest(ctx.Request.URL.String())

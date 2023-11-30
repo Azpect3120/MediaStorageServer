@@ -102,6 +102,8 @@ func (s *Server) LoadRoutes(db *database.Database) {
 	s.Router.POST("/v1/folders", func(ctx *gin.Context) { routes.CreateFolder(db, s.UploadRoot, ctx) })
 	s.Router.PUT("/v1/folders/:id", func(ctx *gin.Context) { routes.UpdateFolder(s.FolderCache, db, s.UploadRoot, ctx) })
 	s.Router.DELETE("/v1/folders/:id", func(ctx *gin.Context) { routes.DeleteFolder(s.FolderCache, s.ImageCache, db, s.UploadRoot, ctx) })
+	
+	s.Router.GET("/v1/folders/:id/images", func(ctx *gin.Context) { routes.GetFolderImages(s.FolderCache, db, s.UploadRoot, ctx) })
 
 	s.Router.GET("/v1/images/:id", func(ctx *gin.Context) { routes.GetImage(s.FolderCache, s.ImageCache, db, s.UploadRoot, ctx) })
 	s.Router.POST("/v1/images/:id", func(ctx *gin.Context) { routes.CreateImage(s.FolderCache, db, s.UploadRoot, ctx) })
