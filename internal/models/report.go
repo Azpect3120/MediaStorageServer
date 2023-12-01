@@ -8,8 +8,9 @@ type Report struct {
 }
 
 type MediaData struct {
-	Name          string
-	Format        string
-	Size          float64
-	UploadedAt    string
+	Name       string
+	Format     string
+	Size       float64
+	SizeSuffix string
+	UploadedAt string
 }

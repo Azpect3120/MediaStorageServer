@@ -2,6 +2,7 @@ package reports
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"math"
 
@@ -26,7 +27,7 @@ func Generate(ch chan models.ReportChannel, db *database.Database, id string) {
 	report.CreatedAt = resF.Folder.CreatedAt.Format("Mon, Jan 2, 2006 at 3:04pm")
 
 	chI := make(chan models.ImagesChannel)
-	go db.GetImages(chI, id)
+	go db.GetImages(chI, id, 10000000000, 1)
 	resI := <-chI
 
 	if resI.Error != nil {
@@ -50,9 +51,20 @@ func Generate(ch chan models.ReportChannel, db *database.Database, id string) {
 // Convert the report to a string that can be emailed to the user
 func String(r *models.Report) (string, error) {
 	for i := range r.Media {
-		r.Media[i].Size = math.Round(r.Media[i].Size / float64(1000000) * 10) / 10
-
+		if r.Media[i].Size >= 1000000000 {
+			r.Media[i].Size = math.Round(r.Media[i].Size / float64(1000000000) * 10) / 10
+			r.Media[i].SizeSuffix = "gb"
+		} else if r.Media[i].Size >= 1000000 {
+			r.Media[i].Size = math.Round(r.Media[i].Size / float64(1000000) * 10) / 10
+			r.Media[i].SizeSuffix = "mb"
+		} else if r.Media[i].Size >= 1000 {
+			r.Media[i].Size = math.Round(r.Media[i].Size / float64(1000) * 10) / 10
+			r.Media[i].SizeSuffix = "kb"
+		} else {
+			r.Media[i].SizeSuffix = "b"
+		}
 	}
+
 	const emailTemplate string = `
 		Hello,
 
@@ -66,7 +78,7 @@ func String(r *models.Report) (string, error) {
 		{{range .Media}}
 		  Name: {{.Name}}
 		  Format: {{.Format}}
-		  Size: {{.Size}}mb
+		  Size: {{.Size}}{{.SizeSuffix}}
 		  Uploaded At: {{.UploadedAt}}
 		{{end}}
 
