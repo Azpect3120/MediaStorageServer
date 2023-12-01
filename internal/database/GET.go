@@ -31,12 +31,12 @@ func (db *Database) GetImage (ch chan models.ImageChannel, id string) {
 	ch <- models.ImageChannel{ Image: &image, Error: nil }
 }
 
-func (db *Database) GetImages (ch chan models.ImagesChannel, id string) {
-	var statement string = "SELECT * FROM images WHERE folderid = $1 ORDER BY uploadedat DESC;"
+func (db *Database) GetImages (ch chan models.ImagesChannel, id string, limit, page int) {
+	var statement string = "SELECT * FROM images WHERE folderid = $1 ORDER BY uploadedat DESC LIMIT $2 OFFSET $3;"
 	
 	var images []*models.Image
 
-	rows, err := db.database.Query(statement, id);
+	rows, err := db.database.Query(statement, id, limit, page);
 	if err != nil {
 		ch <- models.ImagesChannel{ Images: nil, Error: err }
 		return
