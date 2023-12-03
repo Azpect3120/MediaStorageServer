@@ -28,6 +28,9 @@ func CreateImage (cache *cache.Cache, db *database.Database, root string, ctx *g
 		return
 	}
 
+	// Reset cache
+	cache.ResetRequestsContaining(folderId, "folders", "images")
+
 	// Get file from request
 	file, err := ctx.FormFile("media_upload")
 	if err != nil {

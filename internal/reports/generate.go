@@ -2,7 +2,6 @@ package reports
 
 import (
 	"bytes"
-	"fmt"
 	"html/template"
 	"math"
 
