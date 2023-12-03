@@ -1,5 +1,9 @@
 package cache
 
+import (
+	"strings"
+)
+
 // NewCache creates a new cache instance
 func NewCache(size int) *Cache {
 	return &Cache{
@@ -42,6 +46,28 @@ func (c *Cache) ResetRequest(request string) {
 	var requests []string
 	for _, req := range c.Requests {
 		if req != request {
+			requests = append(requests, req)
+		}
+	}
+	c.Requests = requests
+}
+
+// ResetRequestsContaining removes any requests that contain ALL information provided
+func (c *Cache) ResetRequestsContaining(data ...string) {
+	var requests []string
+	for _, req := range c.Requests {
+		var remove bool = false
+		for _, d := range data {
+			if strings.Contains(req, d) {
+				remove = true
+			} else {
+				remove = false
+				break
+			}
+		}
+		if remove {
+			delete(c.Responses, req)
+		} else {
 			requests = append(requests, req)
 		}
 	}
