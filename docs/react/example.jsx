@@ -16,7 +16,7 @@ function FileUploadComponent() {
         const formData = new FormData();
         formData.append("media_upload", file);
 
-        fetch("<host_url>/images/<folder_id>", {
+        fetch("<host_url>/v1/images/<folder_id>", {
             method: "POST",
             body: formData,
         })
