@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.0.1] - 2023-__-__
 
-Description.
+Changes were made to the endpoints to provided a more user friendly experience. `/folders/:id/images` endpoint can be used to create simple pagination effects when retrieving large amounts of media from folders.
+v1.0.0 made use of an extreme amount of concurrency which was unnecessary and hard on the servers processor, which was now removed. The only  concurrency model in place in GIN's default model which allows requests to be handled concurrently at scale.
 
 ### Added
 - GET `/v1/folders/:id/images` was created which can be used for pagination. `Limit` and `Page` queries can be added for use in returning specific quantities of data.
@@ -17,6 +18,7 @@ Description.
 
 ### Fixed
 - Reports generated are now able to display media of different sizes (gb, mb, kb, b)
+- Removed go routines from the database model. Unnecessary concurrency removed this way, the gin framework handles requests concurrently by default.
 
 ## [1.0.0] - 2023-11-29
 
