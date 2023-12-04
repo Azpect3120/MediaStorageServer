@@ -10,6 +10,7 @@ Description.
 
 ### Added
 - GET `/v1/folders/:id/images` was created which can be used for pagination. `Limit` and `Page` queries can be added for use in returning specific quantities of data.
+- Added gzip compression support using the [gin-contrib/gzip](https://github.com/gin-contrib/gzip) module
 
 ### Changed
 - Removed media display from the GET `/v1/folders` endpoint and a new GET `/v1/folders/:id/images` was added which returns ONLY a list of images
