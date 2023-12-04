@@ -22,7 +22,7 @@ func Generate(db *database.Database, id string) (*models.Report, error) {
 	report.FolderName = folder.Name
 	report.CreatedAt = folder.CreatedAt.Format("Mon, Jan 2, 2006 at 3:04pm")
 
-	images, err := db.GetImages(id, 10000000000, 1)
+	images, err := db.GetImages(id, math.MaxInt, 1)
 
 	if err != nil {
 		return &report, err
