@@ -30,12 +30,14 @@ A simple media storage server for storing images and videos of various formats.
 
 This project provides a basic template for building a Go media storage server. It includes CRUD functionality for both folders and images. The images are stored within a folder which creates a more structured storage system. URLs are generated for use in displaying the media stored. The `/images` endpoints can be used to store both image and video media.
 
-## Version 1.0.0
+## Version 1.0.1
 
 All endpoints will be preceded by the version. Excluding the `/uploads` endpoint which will remain constant throughout the versions.
 
 Acceptable version endpoints are...
 - /v1/
+
+  View [change log](https://github.com/Azpect3120/MediaStorageServer/blob/v1.0.0/changelog.md) here
 
 ## Features
 
