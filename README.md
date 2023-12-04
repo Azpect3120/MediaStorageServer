@@ -18,7 +18,7 @@ A simple media storage server for storing images and videos of various formats.
         -   [Editing Folders](#editing-folders)
         -   [Deleting Folders](#deleting-folders)
     - [Media](#uploading-media)
-        -   [Uploading. Media](#uploading-media)
+        -   [Uploading Media](#uploading-media)
         -   [Getting Media](#getting-media)
         -   [Displaying Media](#displaying-media)
         -   [Deleting Media](#deleting-media)
@@ -170,18 +170,6 @@ Ex. Response
       "Name": "folder-name-here",
       "CreatedAt": "timestamp"
     },
-    "count": 1,
-    "images": [
-      {
-        "ID": "image-id",
-        "FolderId": "generated-id-here",
-        "Name": "image-name.jpg",
-        "Size": 940184,
-        "Format": "image/jpeg",
-        "UploadedAt": "timestamp",
-        "Path": "uploads/generated-id-here/image-id.jpg"
-      }
-    ],
     "status": 200
   }
 ```
@@ -328,6 +316,32 @@ Ex. Response
   },
   "status": 200
 }
+```
+
+Another way you can get retrieve media is through their parent folders. Sending a GET request to the `/folders/:id/images` endpoint will return a list of images in the folder.
+
+```bash
+  GET http://localhost:3000/<version>/folders/<folder_id>/images?limit=<num_per_page>&page=<page_num>
+```
+
+Ex. Response
+
+```json
+{
+    "status": 200,
+    "images": [
+        {
+          "ID": "image-id",
+          "FolderId": "generated-id-here",
+          "Name": "image-name.jpg",
+          "Size": 940184,
+          "Format": "image/jpeg",
+          "UploadedAt": "timestamp",
+          "Path": "uploads/generated-id-here/image-id.jpg"
+        }
+    ]
+}
+
 ```
 
 ### <a id="displaying-media"></a> Displaying Media
