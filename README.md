@@ -26,11 +26,11 @@ A simple media storage server for storing images and videos of various formats.
 -   [Contributing](#contributing)
 -   [License](#license)
 
-## Introduction
+## <a id="introduction"></a> Introduction
 
 This project provides a basic template for building a Go media storage server. It includes CRUD functionality for both folders and images. The images are stored within a folder which creates a more structured storage system. URLs are generated for use in displaying the media stored. The `/images` endpoints can be used to store both image and video media.
 
-## Version 1.0.1
+## <a id="version"></a> Version 1.0.1
 
 All endpoints will be preceded by the version. Excluding the `/uploads` endpoint which will remain constant throughout the versions.
 
@@ -39,7 +39,7 @@ Acceptable version endpoints are...
 
 View [change log](https://github.com/Azpect3120/MediaStorageServer/blob/v1.0.0/changelog.md) here
 
-## Features
+## <a id="features"></a> Features
 
 - Image & video storage.
 - Folders for sorting images.
@@ -50,17 +50,17 @@ View [change log](https://github.com/Azpect3120/MediaStorageServer/blob/v1.0.0/c
 - Duplicate images are stored only once on the disk.
 - Supported media formats: [JPEG, PNG, WEBP, BMP, TIFF, ICO, MP4]
 
-## Getting Started
+## <a id="getting-started"></a> Getting Started
 
 Follow these steps to get the project up and running on your local machine.
 
-### Prerequisites
+### <a id="prerequisites"></a> Prerequisites
 
 -   Go (1.16 or higher)
 -   PostgreSQL database
 -   Git (optional)
 
-### Installation
+### <a id="installation"></a> Installation
 
 1. Clone the repository (if you haven't already):
 
@@ -102,7 +102,7 @@ The server's port can be changed in the `cmd/mediaStorageServer/main.go` file:
   err := server.Run("NEW PORT HERE")
 ```
 
-### Database
+### <a id="database"></a> Database
 
 Once the server is up and running you will need to connect to a PostgreSQL database. If you would like the code to work out of the box, you may copy the database schema provided below.
 
@@ -125,7 +125,7 @@ Once the server is up and running you will need to connect to a PostgreSQL datab
   );
 ```
 
-## Usage
+## <a id="usage"></a> Usage
 
 ### <a id="creating-folders"></a>Creating Folders
 
