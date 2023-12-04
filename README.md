@@ -382,4 +382,4 @@ Contributions are welcome! If you'd like to contribute to this project, please f
 
 ## License
 
-The project is licensed under username the **MIT License**
+The project is licensed under the **MIT License**
