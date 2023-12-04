@@ -37,7 +37,7 @@ All endpoints will be preceded by the version. Excluding the `/uploads` endpoint
 Acceptable version endpoints are...
 - /v1/
 
-  View [change log](https://github.com/Azpect3120/MediaStorageServer/blob/v1.0.0/changelog.md) here
+View [change log](https://github.com/Azpect3120/MediaStorageServer/blob/v1.0.0/changelog.md) here
 
 ## Features
 
