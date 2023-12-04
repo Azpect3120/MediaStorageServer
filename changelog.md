@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.0.1] - 2023-__-__
+## [1.0.1] - 2023-12-03
 
 Changes were made to the endpoints to provided a more user friendly experience. `/folders/:id/images` endpoint can be used to create simple pagination effects when retrieving large amounts of media from folders.
 v1.0.0 made use of an extreme amount of concurrency which was unnecessary and hard on the servers processor, which was now removed. The only  concurrency model in place in GIN's default model which allows requests to be handled concurrently at scale.
