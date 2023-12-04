@@ -40,15 +40,5 @@ tar -czf "$tarOutput" -C "$sourceDir" $filesToZip
 
 echo "Zip archives created..."
 
-# Create compressed archives
-# cd builds
-# tar -czf mediaStorageServer_linux_amd64.tar.gz mediaStorageServer_linux_amd64
-# tar -czf mediaStorageServer_linux_386.tar.gz mediaStorageServer_linux_386
-# zip mediaStorageServer_windows_amd64.zip mediaStorageServer_windows_amd64.exe
-# zip mediaStorageServer_windows_386.zip mediaStorageServer_windows_386.exe
-# tar -czf mediaStorageServer_darwin_amd64.tar.gz mediaStorageServer_darwin_amd64
-# tar -czf mediaStorageServer_darwin_386.tar.gz mediaStorageServer_darwin_386
-# cd ..
-
 echo "Builds completed and compressed archives created in the 'builds' directory."
 
