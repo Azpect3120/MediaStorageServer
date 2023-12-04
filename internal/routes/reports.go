@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/Azpect3120/MediaStorageServer/internal/database"
-	"github.com/Azpect3120/MediaStorageServer/internal/models"
 	"github.com/Azpect3120/MediaStorageServer/internal/reports"
 	"github.com/gin-gonic/gin"
 )
@@ -31,25 +30,23 @@ func SendReport(db *database.Database, ctx *gin.Context) {
 	}
 
 
-	ch := make(chan models.ReportChannel)
-	go reports.Generate(ch, db, id)
-	res := <-ch
+	report, err := reports.Generate(db, id)
 
-	if res.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": res.Error.Error()})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
 		return
 	}
 
 
-	emailContent, err := reports.String(&res.Report)
+	emailContent, err := reports.String(report)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": res.Error.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
 		return
 	}
 
 	err = reports.SendEmail(email, "Generated Report", emailContent)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": res.Error.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
 		return
 	}
 

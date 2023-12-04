@@ -5,41 +5,40 @@ import (
 	"path/filepath"
 )
 
-func (db *Database) GetFolder (ch chan models.FolderChannel, id string) {
+func (db *Database) GetFolder (id string) (*models.Folder, error) {
 	var statement string = "SELECT * FROM folders WHERE id = $1;"
 
 	var folder models.Folder
 
 	if err := db.database.QueryRow(statement, id).Scan(&folder.ID, &folder.Name, &folder.CreatedAt); err != nil {
-		ch <- models.FolderChannel{ Folder: nil, Error: err }
+		return nil, err
 	}
 
-	ch <- models.FolderChannel{ Folder: &folder, Error: nil }
+	return &folder, nil
 }
 
-func (db *Database) GetImage (ch chan models.ImageChannel, id string) {
+func (db *Database) GetImage (id string) (*models.Image, error) {
 	var statement string = "SELECT * FROM images WHERE id = $1;"
 
 	var image models.Image 
 
 	if err := db.database.QueryRow(statement, id).Scan(&image.ID, &image.FolderId, &image.Name, &image.Size, &image.Format, &image.UploadedAt, &image.Path); err != nil {
-		ch <- models.ImageChannel{ Image: nil, Error: err }
+		return nil, err
 	}
 
 	image.Path = filepath.Join("uploads", image.FolderId, image.ID) + filepath.Ext(image.Name)
 
-	ch <- models.ImageChannel{ Image: &image, Error: nil }
+	return &image, nil
 }
 
-func (db *Database) GetImages (ch chan models.ImagesChannel, id string, limit, page int) {
+func (db *Database) GetImages (id string, limit, page int) ([]*models.Image, error) {
 	var statement string = "SELECT * FROM images WHERE folderid = $1 ORDER BY uploadedat DESC LIMIT $2 OFFSET $3;"
 	
 	var images []*models.Image
 
 	rows, err := db.database.Query(statement, id, limit, page);
 	if err != nil {
-		ch <- models.ImagesChannel{ Images: nil, Error: err }
-		return
+		return nil, err
 	}
 
 	defer rows.Close()
@@ -48,35 +47,33 @@ func (db *Database) GetImages (ch chan models.ImagesChannel, id string, limit, p
 		var image models.Image
 
 		if err := rows.Scan(&image.ID, &image.FolderId, &image.Name, &image.Size, &image.Format, &image.UploadedAt, &image.Path); err != nil {
-			ch <- models.ImagesChannel{ Images: nil, Error: err }
-			return 
+			return nil, err
 		}
 
 		// image.Path = filepath.Join("uploads", image.FolderId, image.ID) + filepath.Ext(image.Name)
 		images = append(images, &image)
 	}
 
-	ch <- models.ImagesChannel{ Images: images, Error: nil }
+	return images, nil
 }
 
-func (db *Database) GetFolderID (ch chan models.IDChannel, id string) {
+func (db *Database) GetFolderID (id string) (string, error) {
 	var statement string = "SELECT folderid FROM images WHERE id = $1"
 
 	var folderID string
 	if err := db.database.QueryRow(statement, id).Scan(&folderID); err != nil {
-		ch <- models.IDChannel{ID: "", Error: err}
-		return
+		return "", err
 	}
 
-	ch <- models.IDChannel{ID: folderID, Error: nil}
+	return folderID, nil
 }
 
-func (db *Database) GetImageMatches (ch chan models.ImagesChannel, size int64, folderID, id string) {
+func (db *Database) GetImageMatches (size int64, folderID, id string) ([]*models.Image, error) {
 	var statement string = "SELECT * FROM images WHERE size = $1 AND folderid = $2 AND id != $3 ORDER BY uploadedat;"
 
 	rows, err := db.database.Query(statement, size, folderID, id)
 	if err != nil {
-		ch <- models.ImagesChannel{Images: nil, Error: err}
+		return nil, err
 	}
 
 	defer rows.Close()
@@ -87,13 +84,12 @@ func (db *Database) GetImageMatches (ch chan models.ImagesChannel, size int64, f
 		var image models.Image
 
 		if err := rows.Scan(&image.ID, &image.FolderId, &image.Name, &image.Size, &image.Format, &image.UploadedAt, &image.Path); err != nil {
-			ch <- models.ImagesChannel{ Images: nil, Error: err }
-			return 
+			return nil, err
 		}
 
 		// image.Path = filepath.Join("uploads", image.FolderId, image.ID) + filepath.Ext(image.Name)
 		images = append(images, &image)
 	}
 
-	ch <- models.ImagesChannel{Images: images, Error: nil}
+	return images, nil
 }

@@ -10,41 +10,35 @@ import (
 )
 
 // Generate a report using the folder id
-func Generate(ch chan models.ReportChannel, db *database.Database, id string) {
+func Generate(db *database.Database, id string) (*models.Report, error) {
 	var report models.Report
 
-	chF := make(chan models.FolderChannel)
-	go db.GetFolder(chF, id)
-	resF := <-chF
+	folder, err := db.GetFolder(id)
 
-	if resF.Error != nil {
-		ch <- models.ReportChannel{Report: report, Error: resF.Error}
-		return
+	if err != nil {
+		return &report, err
 	}
 
-	report.FolderName = resF.Folder.Name
-	report.CreatedAt = resF.Folder.CreatedAt.Format("Mon, Jan 2, 2006 at 3:04pm")
+	report.FolderName = folder.Name
+	report.CreatedAt = folder.CreatedAt.Format("Mon, Jan 2, 2006 at 3:04pm")
 
-	chI := make(chan models.ImagesChannel)
-	go db.GetImages(chI, id, 10000000000, 1)
-	resI := <-chI
+	images, err := db.GetImages(id, 10000000000, 1)
 
-	if resI.Error != nil {
-		ch <- models.ReportChannel{Report: report, Error: resI.Error}
-		return
+	if err != nil {
+		return &report, err
 	}
 
-	report.MediaCount = len(resI.Images)
+	report.MediaCount = len(images)
 
 	var media []*models.MediaData
-	for _, image := range resI.Images {
+	for _, image := range images{
 		data := &models.MediaData{Name: image.Name, Format: image.Format, Size: float64(image.Size), UploadedAt: image.UploadedAt.Format("Mon, Jan 2, 2006 at 3:04pm")}
 		media = append(media, data)
 	}
 
 	report.Media = media
 
-	ch <- models.ReportChannel{Report: report, Error: nil}
+	return &report, nil
 }
 
 // Convert the report to a string that can be emailed to the user

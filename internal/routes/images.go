@@ -52,9 +52,7 @@ func CreateImage (cache *cache.Cache, db *database.Database, root string, ctx *g
 
 
 	// Create image in database: updates image object
-	ch := make(chan error)
-	go db.CreateImage(ch, image)
-	err = <- ch
+	err = db.CreateImage(image)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
@@ -126,9 +124,7 @@ func CreateImage (cache *cache.Cache, db *database.Database, root string, ctx *g
 			image.Path = match.Path
 
 			// Update database to hold new path
-			chU := make(chan error)
-			go db.UpdateImage(chU, image)
-			err := <- chU
+			err = db.UpdateImage(image)
 
 			if err != nil {
 				ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
@@ -136,9 +132,7 @@ func CreateImage (cache *cache.Cache, db *database.Database, root string, ctx *g
 			}
 
 			// DELETE OLD FILE
-			chE := make(chan error)
-			go deleteFile(chE, root, image.ID)
-			err = <- chE
+			err := deleteFile(root, image.ID)
 
 			if err != nil {
 				ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
@@ -170,17 +164,15 @@ func GetImage (folderCache, imageCache *cache.Cache, db *database.Database, root
 		return
 	}
 
-	ch := make(chan models.ImageChannel)
-	go db.GetImage(ch, id)
-	res := <- ch
+	image, err := db.GetImage(id)
 
-	if res.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": res.Error.Error() })
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
 		return
 	}
 
 	// Add response and request to cache
-	response := GetImageResponse{ Status: http.StatusOK, Image: res.Image }
+	response := GetImageResponse{ Status: http.StatusOK, Image: image }
 	responseData, err := json.Marshal(response)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{ "status": http.StatusBadRequest, "error": err.Error() })
@@ -189,9 +181,9 @@ func GetImage (folderCache, imageCache *cache.Cache, db *database.Database, root
 	imageCache.AddResponse(request, responseData)
 
 	// Remove the parent folder from the cache 
-	folderCache.ResetRequest("/v1/folders/" + res.Image.FolderId)
+	folderCache.ResetRequest("/v1/folders/" + image.FolderId)
 
-	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "image": res.Image })
+	ctx.JSON(http.StatusOK, gin.H{ "status": http.StatusOK, "image": image })
 }
 
 // Deletes a image
@@ -207,22 +199,18 @@ func DeleteImage (folderCache, imageCache *cache.Cache, db *database.Database, r
 		return
 	}
 
-	chFID := make(chan models.IDChannel)
-	go db.GetFolderID(chFID, id)
-	res := <- chFID
+	ID, err := db.GetFolderID(id)
 
-	if res.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": res.Error.Error() })
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
 		return
 	}
 
 	// Remove parent folder from cache
-	folderCache.ResetRequest("/v1/folders/" + res.ID)
+	folderCache.ResetRequest("/v1/folders/" + ID)
 
 	// Delete image from database
-	ch := make(chan error)
-	go db.DeleteImage(ch, id)
-	err := <- ch
+	err = db.DeleteImage(id)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
@@ -230,9 +218,7 @@ func DeleteImage (folderCache, imageCache *cache.Cache, db *database.Database, r
 	}
 
 	// Delete image from file system
-	chFS := make(chan error)
-	go deleteFile(chFS, root, id)
-	err = <- chFS
+	err = deleteFile(root, id)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{ "status": http.StatusInternalServerError, "error": err.Error() })
@@ -243,7 +229,7 @@ func DeleteImage (folderCache, imageCache *cache.Cache, db *database.Database, r
 }
 
 // Walk the file path and delete a file using its ID
-func deleteFile (ch chan error, root, id string) {
+func deleteFile (root, id string) error {
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -262,5 +248,5 @@ func deleteFile (ch chan error, root, id string) {
 		}
 		return nil
 	})
-	ch <- err
+	return err
 }

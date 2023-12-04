@@ -12,14 +12,14 @@ import (
 // Converts folder names to be lowercase
 //
 // Schema does not allow duplicate file names: an error will be thrown
-func (db *Database) CreateFolder (ch chan models.FolderChannel, name string) {
+func (db *Database) CreateFolder (name string) (*models.Folder, error) {
 	name = strings.ToLower(name)
 
 	// Insert into database
 	var statement string = "INSERT INTO folders (name) VALUES ($1);"
 
 	if _, err := db.database.Exec(statement, name); err != nil {
-		ch <- models.FolderChannel{ Folder: nil, Error: err }
+		return nil, err
 	}
 
 	// Query new data
@@ -28,10 +28,10 @@ func (db *Database) CreateFolder (ch chan models.FolderChannel, name string) {
 	var folder models.Folder
 
 	if err := db.database.QueryRow(statement, name).Scan(&folder.ID, &folder.Name, &folder.CreatedAt); err != nil {
-		ch <- models.FolderChannel{ Folder: nil, Error: err }
+		return nil, err
 	}
 
-	ch <- models.FolderChannel{ Folder: &folder, Error: nil }
+	return &folder, nil
 }
 
 // Create an image in the database
@@ -39,7 +39,7 @@ func (db *Database) CreateFolder (ch chan models.FolderChannel, name string) {
 // Converts image names to be lowercase
 //
 // Does not return a new image object. Updates the image object passed into the function.
-func (db *Database) CreateImage (ch chan error, image *models.Image) {
+func (db *Database) CreateImage (image *models.Image) error {
 	image.Name = strings.ToLower(image.Name)
 
 	// Insert into database
@@ -47,18 +47,17 @@ func (db *Database) CreateImage (ch chan error, image *models.Image) {
 
 	result, err := db.database.Exec(statement, image.ID, image.FolderId, image.Name, image.Format, image.Size, image.Path)
 	if err != nil {
-
-		ch <- err 
+		return err
 	}
 
 	numRows, err := result.RowsAffected()
 	if err != nil {
-		ch <- err
+		return err
 	}
 	
 	if numRows == 0 {
-		ch <- errors.New("New image was not created.")
+		return errors.New("New image was not created.")
 	}
 
-	ch <- nil
+	return err
 }

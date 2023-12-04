@@ -39,25 +39,23 @@ func CreateFolder(db *database.Database, root string, ctx *gin.Context) {
 	}
 
 	// Create folder in database
-	ch := make(chan models.FolderChannel)
-	go db.CreateFolder(ch, req.Name)
-	res := <-ch
+	folder, err := db.CreateFolder(req.Name)
 
-	if res.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": res.Error.Error()})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
 		return
 	}
 
 	// Create folder in file system
-	newFolderPath := filepath.Join(root, res.Folder.ID)
+	newFolderPath := filepath.Join(root, folder.ID)
 
-	err := os.Mkdir(newFolderPath, 0755)
+	err = os.Mkdir(newFolderPath, 0755)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": err.Error()})
 	}
 
 	// Return newly created folder
-	ctx.JSON(http.StatusCreated, gin.H{"status": http.StatusCreated, "folder": res.Folder})
+	ctx.JSON(http.StatusCreated, gin.H{"status": http.StatusCreated, "folder": folder})
 }
 
 // Gets a folder
@@ -82,16 +80,14 @@ func GetFolder(cache *cache.Cache, db *database.Database, root string, ctx *gin.
 	}
 
 	// Get folder meta data from database
-	ch := make(chan models.FolderChannel)
-	go db.GetFolder(ch, id)
-	res := <-ch
+	folder, err := db.GetFolder(id)
 
-	if res.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": res.Error.Error()})
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": err.Error()})
 		return
 	}
 	// Add response and request to cache
-	response := GetFolderResponse{Status: http.StatusOK, Folder: res.Folder}
+	response := GetFolderResponse{Status: http.StatusOK, Folder: folder}
 	responseData, err := json.Marshal(response)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": err.Error()})
@@ -147,16 +143,14 @@ func GetFolderImages(cache *cache.Cache, db *database.Database, root string, ctx
 	pageNum = (pageNum - 1) * limitNum
 
 	// Get images from the database
-	ch := make(chan models.ImagesChannel)
-	go db.GetImages(ch, id, limitNum, pageNum)
-	res := <-ch
+	images, err := db.GetImages(id, limitNum, pageNum)
 
-	if res.Images == nil {
-		res.Images = []*models.Image{}
+	if images == nil {
+		images = []*models.Image{}
 	}
 
 	// Add request to cache
-	response := GetFolderImagesResponse{ Status: http.StatusOK, Images: res.Images }
+	response := GetFolderImagesResponse{ Status: http.StatusOK, Images: images }
 	responseData, err := json.Marshal(response)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": err.Error()})
@@ -188,25 +182,22 @@ func UpdateFolder(cache *cache.Cache, db *database.Database, root string, ctx *g
 	}
 
 	// Update folder in database
-	ch := make(chan error)
-	go db.UpdateFolder(ch, id, folder)
-	err := <-ch
+	err := db.UpdateFolder(id, folder)
+
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
 		return
 	}
 
 	// Get updated folder from database
-	chF := make(chan models.FolderChannel)
-	go db.GetFolder(chF, id)
-	res := <-chF
+	folder, err = db.GetFolder(id)
 
-	if res.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": res.Error.Error()})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "folder": res.Folder})
+	ctx.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "folder": folder})
 }
 
 // Deletes a folder
@@ -225,9 +216,7 @@ func DeleteFolder(folderCache, imageCache *cache.Cache, db *database.Database, r
 	}
 
 	// Delete folder from database
-	ch := make(chan error)
-	go db.DeleteFolder(ch, id)
-	err := <-ch
+	err := db.DeleteFolder(id)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})

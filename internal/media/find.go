@@ -7,13 +7,11 @@ import (
 
 // Return an array of images that are of the same size of the 'target'
 func FindMatches (db *database.Database, target *models.Image) ([]*models.Image,error) {
-	ch := make(chan models.ImagesChannel)
-	go db.GetImageMatches(ch, target.Size, target.FolderId, target.ID)
-	res := <- ch
+	imgs, err := db.GetImageMatches(target.Size, target.FolderId, target.ID)
 
-	if res.Error != nil {
-		return nil, res.Error
+	if err != nil {
+		return nil, err
 	}
 
-	return res.Images, nil
+	return imgs, nil
 }
