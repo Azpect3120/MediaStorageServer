@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 
 	"github.com/Azpect3120/MediaStorageServer/internal/cache"
@@ -37,6 +38,7 @@ func CreateServer() *Server {
 
 	server.Config.AllowOrigins = []string{"*"}
 	server.Router.Use(cors.New(server.Config))
+	server.Router.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	return server
 }
