@@ -90,10 +90,14 @@ Follow these steps to get the project up and running on your local machine.
 The port can be changed from the default (:3000) to whatever port you would like, this can be done by updating your environment.
 
 ```bash
-  export $MSS_PORT="<port>"
+  export MSS_PORT="<port>"
 ```
 
-NOTE: Updating the .env file will not update the port.
+NOTE: Updating the .env file not also update the port.
+
+```bash
+    MSS_PORT="<port>"
+```
 
 5. Build and run the server:
 
