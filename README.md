@@ -30,7 +30,7 @@ A simple media storage server for storing images and videos of various formats.
 
 This project provides a basic template for building a Go media storage server. It includes CRUD functionality for both folders and images. The images are stored within a folder which creates a more structured storage system. URLs are generated for use in displaying the media stored. The `/images` endpoints can be used to store both image and video media.
 
-## Version 1.0.0
+## Version 1.0.2
 
 All endpoints will be preceded by the version. Excluding the `/uploads` endpoint which will remain constant throughout the versions.
 
@@ -85,7 +85,17 @@ Follow these steps to get the project up and running on your local machine.
   go mod tidy
 ```
 
-4. Build and run the server:
+4. Define port (optional):
+
+The port can be changed from the default (:3000) to whatever port you would like, this can be done by updating your environment.
+
+```bash
+  export $MSS_PORT="<port>"
+```
+
+NOTE: Updating the .env file will not update the port.
+
+5. Build and run the server:
 
 ```bash
   go build -o ./bin/server cmd/mediaStorageServer/main.go
