@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/Azpect3120/MediaStorageServer/internal/server"
 	"github.com/Azpect3120/MediaStorageServer/internal/database"
@@ -18,7 +19,12 @@ func main() {
 
 	server.LoadRoutes(database)
 
-	err := server.Run("3000")
+	port := os.Getenv("MSS_PORT")
+	if port == "" {
+		port = "3000"
+	}
+
+	err := server.Run(port)
 	if err != nil {
 		log.Fatalln("Error running server: ", err)
 	}
