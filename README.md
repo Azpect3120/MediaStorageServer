@@ -93,7 +93,7 @@ The port can be changed from the default (:3000) to whatever port you would like
   export MSS_PORT="<port>"
 ```
 
-NOTE: Updating the .env file not also update the port.
+NOTE: Updating the .env file will also update the port.
 
 ```bash
     MSS_PORT="<port>"
